@@ -14,7 +14,7 @@
 int screenWidth;
 int screenHeight;
 
-GLFWwindow * window;
+GLFWwindow* window;
 
 bool exitApp = false;
 int lastMousePosX;
@@ -41,6 +41,23 @@ typedef struct _Vertex {
 
 // Codigo de los shaders, por ahora se crean en una cadena de texto
 // Shader de vertices
+<<<<<<< HEAD
+const GLchar* vertexShaderSource = "#version 330 core\n"
+"layout (location=0) in vec3 in_position;\n"
+"layout (location=1) in vec3 in_color;\n"
+"out vec3 our_color;\n"
+"void main(){\n"
+"gl_Position = vec4(in_position, 1.0);\n"
+"our_color= in_color;\n"
+"}\0";
+// Shader de fragmento
+const GLchar* fragmentShaderSource = "#version 330 core\n"
+"out vec4 color;\n"
+"in vec3 our_color;\n"
+"void main(){\n"
+"color = vec4(our_color, 1.0);\n"
+"}\0";
+=======
 const GLchar * vertexShaderSource = "#version 330 core\n"
 		"layout (location=0) in vec3 in_position;\n"
 		"layout (location=1) in vec3 in_color;\n"
@@ -56,10 +73,11 @@ const GLchar * fragmentShaderSource = "#version 330 core\n"
 		"void main(){\n"
 		"color = vec4(our_color, 1.0);\n"
 		"}\0";
+>>>>>>> 0df5ecf725d219c5a64e577a03db57561c342880
 
 // Implementacion de todas las funciones.
 void init(int width, int height, std::string strTitle, bool bFullScreen) {
-	
+
 	if (!glfwInit()) {
 		std::cerr << "Failed to initialize GLFW" << std::endl;
 		exit(-1);
@@ -105,7 +123,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	}
 
 	glViewport(0, 0, screenWidth, screenHeight);
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.30f, 0.0f, 0.25f);
 
 	// Compilacion de los shaders
 
@@ -119,7 +137,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	GLchar infoLog[512];
 	// Se obtiene el estatus de la compilacion del vertex shader
 	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
-	if(!success){
+	if (!success) {
 		// En caso de error se obtiene el error y lanza mensaje con error
 		glGetShaderInfoLog(vertexShaderID, 512, NULL, infoLog);
 		std::cout << "Error al compilar el VERTEX_SHADER." << infoLog << std::endl;
@@ -148,7 +166,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glLinkProgram(shaderProgramID);
 	// Revision de error de linkeo del programa
 	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
-	if(!success){
+	if (!success) {
 		glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
 		std::cout << "ERROR al linkear el programa." << infoLog << std::endl;
 	}
@@ -165,6 +183,160 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		{ {-0.5f, 0.5f, 0.0f}, {1.0f, 0.0f, 1.0f}}
  };*/
 
+<<<<<<< HEAD
+/* ESTRELLA
+Vertex vertices[]
+	{
+	
+		{{0.0, 0.7, 0.0},{0.1, 0.6, 0.45}},
+		{{0.2, 0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, 0.85, 0.0},{0.4, 0.1, 0.8}},
+
+		{{0.0, 0.7, 0.0},{0.1, 0.6, 0.45}},
+		{{-0.2, 0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, 0.85, 0.0},{0.4, 0.1, 0.8}},
+
+		{{0.0, 0.0, 0.0},{0.2, 0.3, 0.5}},
+		{{0.2, 0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, 0.7, 0.0},{0.2, 0.4, 0.1}},
+
+		{{-0.2, 0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, 0.7, 0.0},{0.1, 0.6, 0.45}},
+		{{0.0, 0.0, 0.0},{0.2, 0.3, 0.5}},
+
+		{{0.0, 0.0, 0.0},{0.2, 0.3, 0.5}},
+		{{0.2, -0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, -0.7, 0.0},{0.2, 0.4, 0.1}},
+
+		{{-0.2, -0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, -0.7, 0.0},{0.1, 0.6, 0.45}},
+		{{0.0, 0.0, 0.0},{0.2, 0.3, 0.5}},
+
+		{{0.0, -0.7, 0.0},{0.1, 0.6, 0.45}},
+		{{0.2, -0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, -0.85, 0.0},{0.4, 0.1, 0.8}},
+
+		{{0.0, -0.7, 0.0},{0.1, 0.6, 0.45}},
+		{{-0.2, -0.7, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, -0.85, 0.0},{0.4, 0.1, 0.8}},
+
+		{{-0.7, 0.2, 0.0},{0.2, 0.3, 0.5}},
+		{{-0.7, 0.0, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, 0.0, 0.0},{0.2, 0.4, 0.1}},
+
+		{{0.0, 0.0, 0.0},{0.1, 0.6, 0.45}},
+		{{-0.7, 0.0, 0.0},{0.5, 0.3, 0.7}},
+		{{-0.7, -0.2, 0.0},{0.4, 0.1, 0.8}},
+
+		{{-0.7, 0.0, 0.0},{0.1, 0.6, 0.45}},
+		{{-0.7, 0.2, 0.0},{0.5, 0.3, 0.7}},
+		{{-0.85, 0.0, 0.0},{0.4, 0.1, 0.8}},
+
+		{{-0.7, 0.0, 0.0},{0.1, 0.6, 0.45}},
+		{{-0.7, -0.2, 0.0},{0.5, 0.3, 0.7}},
+		{{-0.85, 0.0, 0.0},{0.4, 0.1, 0.8}},
+
+		{{0.7, 0.2, 0.0},{0.2, 0.3, 0.5}},
+		{{0.7, 0.0, 0.0},{0.5, 0.3, 0.7}},
+		{{0.0, 0.0, 0.0},{0.2, 0.4, 0.1}},
+
+		{{0.0, 0.0, 0.0},{0.1, 0.6, 0.45}},
+		{{0.7, 0.0, 0.0},{0.5, 0.3, 0.7}},
+		{{0.7, -0.2, 0.0},{0.4, 0.1, 0.8}},
+
+		{{0.7, 0.0, 0.0},{0.1, 0.6, 0.45}},
+		{{0.7, 0.2, 0.0},{0.5, 0.3, 0.7}},
+		{{0.85, 0.0, 0.0},{0.4, 0.1, 0.8}},
+
+		{{0.7, 0.0, 0.0},{0.1, 0.6, 0.45}},
+		{{0.7, -0.2, 0.0},{0.5, 0.3, 0.7}},
+		{{0.85, 0.0, 0.0},{0.4, 0.1, 0.8}}
+
+	};*/
+
+	Vertex vertices[]
+	{
+		//cuadrado
+		{{-0.2, -0.2, 0.0},{1.0, 1.0, 1.0}},
+		{{0.2, -0.2, 0.0},{1.0, 1.0, 1.0}},
+		{{0.2, 0.2, 0.0},{1.0, 1.0, 1.0}},
+		{{-0.2, -0.2, 0.0},{1.0, 1.0, 1.0}},
+		{{0.2, 0.2, 0.0},{1.0, 1.0, 1.0}},
+		{{-0.2, 0.2, 0.0},{1.0, 1.0, 1.0}},
+
+		//techo superior
+		{{-0.23, 0.20, 0.0},{1.0, 0.0, 0.0}},
+		{{0.23, 0.20, 0.0},{1.0, 0.0, 0.0}},
+		{{0.0, 0.54, 0.0},{1.0, 0.0, 0.0}},
+
+		//techo
+		{{-0.2, 0.2, 0.0},{1.0, 0.5, 0.0}},
+		{{0.2, 0.2, 0.0},{1.0, 0.5, 0.0}},
+		{{0.0, 0.5, 0.0},{1.0, 0.5, 0.0}},
+
+		//cuadrado debajo del techo
+		{{-0.2, 0.15, 0.0},{1.0, 0.7, 0.15}},
+		{{0.2, 0.2, 0.0},{1.0,0.7, 0.15}},
+		{{-0.2, 0.2, 0.0},{1.0, 0.7, 0.15}},
+		{{0.2, 0.2, 0.0},{1.0, 0.7, 0.15}},
+		{{-0.2, 0.15, 0.0},{1.0, 0.7, 0.15}},
+		{{0.2, 0.15, 0.0},{1.0, 0.7, 0.15}},
+
+		//marco de la puerta
+		{{-0.18, -0.2, 0.0},{0.50, 0.25, 0.0}},
+		{{-0.18, 0.1, 0.0},{0.50, 0.25, 0.0}},
+		{{-0.02, 0.1, 0.0},{0.50, 0.25, 0.0}},
+		{{-0.02, 0.1, 0.0},{0.50, 0.25, 0.0}},
+		{{-0.02, -0.2, 0.0},{0.50, 0.25, 0.0}},
+		{{-0.18, -0.2, 0.0},{0.50, 0.25, 0.0}},
+
+		//puerta
+		{{-0.15, -0.18, 0.0},{1.0, 0.7, 0.15}},
+		{{-0.15, 0.07, 0.0},{1.0, 0.7, 0.15}},
+		{{-0.05, 0.07, 0.0},{1.0, 0.7, 0.15}},
+		{{-0.05, 0.07, 0.0},{1.0, 0.7, 0.15}},
+		{{-0.05, -0.18, 0.0},{1.0, 0.7, 0.15}},
+		{{-0.15, -0.18, 0.0},{1.0, 0.7, 0.15}},
+
+		//marco de la ventana
+		{{0.00, -0.1, 0.0},{1.0, 0.7, 0.15}},
+		{{0.00, 0.11, 0.0},{1.0, 0.7, 0.15}},
+		{{0.18, 0.11, 0.0},{1.0, 0.7, 0.15}},
+		{{0.18, 0.11, 0.0},{1.0, 0.7, 0.15}},
+		{{0.00, -0.1, 0.0},{1.0, 0.7, 0.15}},
+		{{0.18, -0.1, 0.0},{1.0, 0.7, 0.15}},
+
+		//ventana
+		{{0.02, -0.08, 0.0},{0.13, 0.44, 0.7}},
+		{{0.02, 0.02, 0.0},{0.13, 0.44, 0.7}},
+		{{0.085, 0.02, 0.0},{0.13, 0.44, 0.7}},
+		{{0.085, 0.02, 0.0},{0.13, 0.44, 0.7}},
+		{{0.02, -0.08, 0.0},{0.13, 0.44, 0.7}},
+		{{0.085, -0.08, 0.0},{0.13, 0.44, 0.7}},
+
+		{{0.16, -0.08, 0.0},{0.13, 0.44, 0.7}},
+		{{0.16, 0.02, 0.0},{0.13, 0.44, 0.7}},
+		{{0.1, 0.02, 0.0},{0.13, 0.44, 0.7}},
+		{{0.1, 0.02, 0.0},{0.13, 0.44, 0.7}},
+		{{0.16, -0.08, 0.0},{0.13, 0.44, 0.7}},
+		{{0.1, -0.08, 0.0},{0.13, 0.44, 0.7}},
+
+		{{0.02, 0.03, 0.0},{0.13, 0.44, 0.7}},
+		{{0.02, 0.10, 0.0},{0.13, 0.44, 0.7}},
+		{{0.16, 0.10, 0.0},{0.13, 0.44, 0.7}},
+		{{0.16, 0.10, 0.0},{0.13, 0.44, 0.7}},
+		{{0.02, 0.03, 0.0},{0.13, 0.44, 0.7}},
+		{{0.16, 0.03, 0.0},{0.13, 0.44, 0.7}},
+
+		//chimenea
+		{{0.1, 0.35, 0.0},{1.0, 0.0, 0.0}},
+		{{0.1, 0.5, 0.0},{1.0, 0.0, 0.0}},
+		{{0.2, 0.5, 0.0},{1.0, 0.0, 0.0}},
+		{{0.1, 0.35, 0.0},{1.0, 0.0, 0.0}},
+		{{0.2, 0.5, 0.0},{1.0, 0.0, 0.0}},
+		{{0.2, 0.2, 0.0},{1.0, 0.0, 0.0}}
+
+=======
 	Vertex vertices[] 
 	{
 		{{0.0, 0.0, 0.0},{0.2, 0.3, 0.5}},
@@ -184,6 +356,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		{ { 0.0, -0.7, 0.0 },{ 0.1, 0.6, 0.45 } },
 		{ { -0.2, -0.7, 0.0 },{ 0.5, 0.3, 0.7 } },
 		{ { 0.0, -0.85, 0.0 },{ 0.4, 0.1, 0.8 } }
+>>>>>>> 0df5ecf725d219c5a64e577a03db57561c342880
 	};
 
 
@@ -248,7 +421,7 @@ void destroy() {
 	glBindVertexArray(VAO);
 	glDisableVertexAttribArray(0);
 
-	glBindBuffer(GL_ARRAY_BUFFER,VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glDeleteBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -294,7 +467,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod) {
 	}
 }
 
-bool processInput(bool continueApplication){
+bool processInput(bool continueApplication) {
 	if (exitApp || glfwWindowShouldClose(window) != 0) {
 		return false;
 	}
@@ -315,14 +488,18 @@ void applicationLoop() {
 		// Se indica el buffer de datos y la estructura de estos utilizando solo el id del VAO
 		glBindVertexArray(VAO);
 		// Primitiva de ensamble
+<<<<<<< HEAD
+		glDrawArrays(GL_TRIANGLES, 0,60);
+=======
 		glDrawArrays(GL_TRIANGLES, 0, 14);
+>>>>>>> 0df5ecf725d219c5a64e577a03db57561c342880
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 	}
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, char** argv) {
 	init(800, 700, "Window GLFW", false);
 	applicationLoop();
 	destroy();
