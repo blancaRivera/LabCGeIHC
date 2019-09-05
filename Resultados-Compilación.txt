@@ -1,0 +1,8 @@
+﻿1>------ Operación Compilar iniciada: proyecto: 03-SistemasCoordenados, configuración: Debug Win32 ------
+1>main.cpp
+1>c:\users\cgi05\desktop\laboratoriocgi\labcgeihc\03-sistemascoordenados\src\main.cpp(21): warning C4067: símbolos (token) inesperados después de la directiva del preprocesador; se esperaba una nueva línea
+1>c:\users\cgi05\desktop\laboratoriocgi\labcgeihc\03-sistemascoordenados\src\main.cpp(283): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
+1>c:\users\cgi05\desktop\laboratoriocgi\labcgeihc\03-sistemascoordenados\src\main.cpp(284): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
+1>03-SistemasCoordenados.vcxproj -> C:\Users\CGI05\Desktop\laboratorioCGI\LabCGeIHC\Debug\03-SistemasCoordenados.exe
+1>Compilación del proyecto "03-SistemasCoordenados.vcxproj" terminada.
+========== Compilar: 1 correctos, 0 incorrectos, 0 actualizados, 0 omitidos ==========
