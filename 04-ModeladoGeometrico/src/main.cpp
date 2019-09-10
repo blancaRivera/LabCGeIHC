@@ -116,7 +116,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//metodo setter que coloca el apumntador al shader que se ocupara
 	sphere1.setShader(&shader);
 	//metodo setter para poner el color a la esfera
-	sphere1.setColor(glm::vec4(0.3, 0.3, 1.0, 1.0));
+	sphere1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	//inicializar vao, vbo y ebo //esfera
 	sphere2.init();
@@ -127,11 +127,11 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	cylinder1.init();
 	cylinder1.setShader(&shader);
-	cylinder1.setColor(glm::vec4(0.3, 0.3, 1.0, 1.0));
+	cylinder1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	box1.init();
 	box1.setShader(&shader);
-	box1.setColor(glm::vec4(0.3, 0.3, 1.0, 1.0));
+	box1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	camera->setPosition(glm::vec3(2.0, 0.0, 4.0));
 }
@@ -241,6 +241,7 @@ void applicationLoop() {
 		box1.enableWireMode();
 		box1.render(glm::scale(model, glm::vec3(1.0, 1.0, 0.1)));
 
+		//brazo izquierdo
 		glm::mat4 j1 = glm::translate(model, glm::vec3(0.5f, 0.0, 0.0));
 		sphere1.enableWireMode();
 		sphere1.render(glm:: scale (j1, glm:: vec3(0.1, 0.1, 0.1)));
@@ -264,12 +265,35 @@ void applicationLoop() {
 
 		//ojos
 		glm::mat4 ojo = glm::translate(model, glm::vec3(0.25, 0.25, 0.5));
-		sphere1.enableWireMode();
-		sphere1.render(glm::scale(ojo, glm::vec3(0.2, 0.2, 0.2)));
+		sphere2.enableWireMode();
+		sphere2.render(glm::scale(ojo, glm::vec3(0.2, 0.2, 0.2)));
 
 		glm::mat4 ojo2 = glm::translate(model, glm::vec3(-0.25, 0.25, 0.5));
 		sphere2.enableWireMode();
 		sphere2.render(glm::scale(ojo2, glm::vec3(0.2, 0.2, 0.2)));
+
+		//brazo derecho
+		glm::mat4 j3 = glm::translate(model, glm::vec3(-0.5f, 0.0, 0.0));
+		sphere1.enableWireMode();
+		sphere1.render(glm::scale(j3, glm::vec3(0.1, 0.1, 0.1)));
+
+		//hueso tres
+		glm::mat4 l3 = glm::translate(j3, glm::vec3(-0.25, 0.0, 0.0));
+		l3 = glm::rotate(l3, glm::radians(90.0f), glm::vec3(0, 0, 0.1));
+		cylinder1.enableWireMode();
+		cylinder1.render(glm::scale(l3, glm::vec3(0.1, 0.5, 0.1)));
+
+		//segunda articulacion
+		glm::mat4 j4 = glm::translate(j3, glm::vec3(-0.5, 0.0, 0.0));
+		sphere1.enableWireMode();
+		sphere1.render(glm::scale(j4, glm::vec3(0.1, 0.1, 0.1)));
+
+		//hueso cuatro
+		glm::mat4 l4 = glm::translate(j4, glm::vec3(-0.25, 0.0, 0.0));
+		l4 = glm::rotate(l4, glm::radians(90.0f), glm::vec3(0.0, 0.0, -1.1));
+		cylinder1.enableWireMode();
+		cylinder1.render(glm::scale(l4, glm::vec3(0.1, 0.5, 0.1)));
+
 
 		shader.turnOff();
 
