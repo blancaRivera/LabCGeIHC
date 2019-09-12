@@ -38,8 +38,10 @@ std::shared_ptr <FirstPersonCamera> camera(new FirstPersonCamera());
 
 Sphere sphere1(20, 20);
 Sphere sphere2(20, 20);
+Sphere sphere3(10, 10);
 Cylinder cylinder1(20, 20, 0.5, 0.5);
 Box box1;
+Box box2;
 
 bool exitApp = false;
 int lastMousePosX, offSetX=0;
@@ -125,13 +127,21 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//metodo setter para poner el color a la esfera
 	sphere2.setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
+	sphere3.init();
+	sphere3.setShader(&shader);
+	sphere3.setColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
+
 	cylinder1.init();
 	cylinder1.setShader(&shader);
 	cylinder1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	box1.init();
 	box1.setShader(&shader);
-	box1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
+	box1.setColor(glm::vec4(1.0, 0.8, 0.0, 1.0));
+
+	box2.init();
+	box2.setShader(&shader);
+	box2.setColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 
 	camera->setPosition(glm::vec3(2.0, 0.0, 4.0));
 }
@@ -169,10 +179,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 	offSetX = xpos-lastMousePosX;
 	offSetY = ypos-lastMousePosY;
-	lastMousePosX = xpos;
-	lastMousePosY = ypos;
+
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		camera->mouseMoveCamera(offSetX, offSetY, deltaTime);
+
+	lastMousePosX = xpos;
+	lastMousePosY = ypos;
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod) {
@@ -238,8 +250,12 @@ void applicationLoop() {
 		/*cylinder1.render(model);
 		cylinder1.enableWireMode();*/
 
-		box1.enableWireMode();
+		//box1.enableWireMode();
 		box1.render(glm::scale(model, glm::vec3(1.0, 1.0, 0.1)));
+
+		//pantalon
+		glm::mat4 p1 = glm::translate(model, glm::vec3(0.0, -0.4, 0.0));
+		box2.render(glm::scale(p1, glm::vec3(1.0, 0.2, 0.5)));
 
 		//brazo izquierdo
 		glm::mat4 j1 = glm::translate(model, glm::vec3(0.5f, 0.0, 0.0));
@@ -258,10 +274,10 @@ void applicationLoop() {
 		sphere1.render(glm::scale(j2, glm::vec3(0.1, 0.1, 0.1)));
 
 		//hueso dos
-		glm::mat4 l2 = glm::translate(j2, glm::vec3(0.25, 0.0, 0.0));
+		glm::mat4 l2 = glm::translate(j2, glm::vec3(0.15, 0.0, 0.0));
 		l2 = glm::rotate(l2, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.1));
 		cylinder1.enableWireMode();
-		cylinder1.render(glm::scale(l2, glm::vec3(0.1, 0.5, 0.1)));
+		cylinder1.render(glm::scale(l2, glm::vec3(0.1, 0.25, 0.1)));
 
 		//ojos
 		glm::mat4 ojo = glm::translate(model, glm::vec3(0.25, 0.25, 0.5));
@@ -271,6 +287,12 @@ void applicationLoop() {
 		glm::mat4 ojo2 = glm::translate(model, glm::vec3(-0.25, 0.25, 0.5));
 		sphere2.enableWireMode();
 		sphere2.render(glm::scale(ojo2, glm::vec3(0.2, 0.2, 0.2)));
+
+		glm::mat4 ojoi = glm::translate(model, glm::vec3(0.25, 0.25, 0.5));
+		sphere3.render(glm::scale(ojoi, glm::vec3(0.1, 0.1, 0.2)));
+
+		glm::mat4 ojo2i = glm::translate(model, glm::vec3(-0.25, 0.25, 0.5));
+		sphere3.render(glm::scale(ojo2i, glm::vec3(0.1, 0.1, 0.2)));
 
 		//brazo derecho
 		glm::mat4 j3 = glm::translate(model, glm::vec3(-0.5f, 0.0, 0.0));
@@ -289,11 +311,63 @@ void applicationLoop() {
 		sphere1.render(glm::scale(j4, glm::vec3(0.1, 0.1, 0.1)));
 
 		//hueso cuatro
-		glm::mat4 l4 = glm::translate(j4, glm::vec3(-0.25, 0.0, 0.0));
+		glm::mat4 l4 = glm::translate(j4, glm::vec3(-0.15, 0.0, 0.0));
 		l4 = glm::rotate(l4, glm::radians(90.0f), glm::vec3(0.0, 0.0, -1.1));
 		cylinder1.enableWireMode();
-		cylinder1.render(glm::scale(l4, glm::vec3(0.1, 0.5, 0.1)));
+		cylinder1.render(glm::scale(l4, glm::vec3(0.1, 0.25, 0.1)));
 
+		//pierna derecha
+		glm::mat4 j5 = glm::translate(model, glm::vec3(-0.25, -0.5, 0.0));
+		sphere1.enableWireMode();
+		sphere1.render(glm::scale(j5, glm::vec3(0.1, 0.1, 0.1)));
+
+		//hueso cinco
+		glm::mat4 l5 = glm::translate(j5, glm::vec3(0.0, -0.15, 0.0));
+		l5 = glm::rotate(l5, glm::radians(00.0f), glm::vec3(0, 0, 0.1));
+		cylinder1.enableWireMode();
+		cylinder1.render(glm::scale(l5, glm::vec3(0.1, 0.25, 0.1)));
+
+		//segunda articulacion
+		glm::mat4 j6 = glm::translate(j5, glm::vec3(0.0, -0.30, 0.0));
+		sphere1.enableWireMode();
+		sphere1.render(glm::scale(j6, glm::vec3(0.1, 0.1, 0.1)));
+
+		//hueso seis
+		glm::mat4 l6 = glm::translate(j5, glm::vec3(0.0, -0.4, 0.0));
+		l6 = glm::rotate(l6, glm::radians(00.0f), glm::vec3(0.0, 0.0, -1.1));
+		cylinder1.enableWireMode();
+		cylinder1.render(glm::scale(l6, glm::vec3(0.1, 0.25, 0.1)));
+
+		//zapato
+		glm::mat4 j11 = glm::translate(j5, glm::vec3(0.0, -0.58, 0.0));
+		sphere3.render(glm::scale(j11, glm::vec3(0.1, 0.1, 0.1)));
+
+
+		//pierna izquierda
+		glm::mat4 j7 = glm::translate(model, glm::vec3(0.25, -0.5, 0.0));
+		sphere1.enableWireMode();
+		sphere1.render(glm::scale(j7, glm::vec3(0.1, 0.1, 0.1)));
+
+		//hueso seis
+		glm::mat4 l7 = glm::translate(j7, glm::vec3(0.0, -0.15, 0.0));
+		l7 = glm::rotate(l7, glm::radians(00.0f), glm::vec3(0, 0, 0.1));
+		cylinder1.enableWireMode();
+		cylinder1.render(glm::scale(l7, glm::vec3(0.1, 0.25, 0.1)));
+
+		//segunda articulacion
+		glm::mat4 j8 = glm::translate(j7, glm::vec3(0.0, -0.25, 0.0));
+		sphere1.enableWireMode();
+		sphere1.render(glm::scale(j8, glm::vec3(0.1, 0.1, 0.1)));
+
+		//hueso siete
+		glm::mat4 l8 = glm::translate(j7, glm::vec3(0.0, -0.4, 0.0));
+		l8 = glm::rotate(l8, glm::radians(00.0f), glm::vec3(0.0, 0.0, -1.1));
+		cylinder1.enableWireMode();
+		cylinder1.render(glm::scale(l8, glm::vec3(0.1, 0.25, 0.1)));
+
+		//zapato
+		glm::mat4 j10 = glm::translate(j7, glm::vec3(0.0, -0.58, 0.0));
+		sphere3.render(glm::scale(j10, glm::vec3(0.1, 0.1, 0.1)));
 
 		shader.turnOff();
 
