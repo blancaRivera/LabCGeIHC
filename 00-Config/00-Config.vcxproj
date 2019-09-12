@@ -73,6 +73,10 @@
     <IncludePath>../external/glew/include;../external/glfw/include;../external/glm;../external/assimp/include;../external/FreeImage/include;$(IncludePath)</IncludePath>
     <LibraryPath>../external/glfw/lib/;../external/glew/lib;../external/assimp/lib;../external/FreeImage/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>../external/glew/include;../external/glfw/include;../external/glm;../external/assimp/include;../external/FreeImage/include;$(IncludePath)</IncludePath>
+    <LibraryPath>../external/glfw/lib/;../external/glew/lib;../external/assimp/lib;../external/FreeImage/lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -91,6 +95,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32d.lib;FreeImaged.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
