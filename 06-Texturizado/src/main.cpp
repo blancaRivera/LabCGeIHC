@@ -27,7 +27,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 //Descomentar
-//#include "Headers/Texture.h"
+#include "Headers/Texture.h"
 
 int screenWidth;
 int screenHeight;
@@ -35,19 +35,21 @@ int screenHeight;
 GLFWwindow * window;
 
 Shader shader;
-//Descomentar
-//Shader shaderTexture;
+//shader del texturizado
+Shader shaderTexture;
 
 std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
 
 Sphere sphere1(20, 20);
 Sphere sphere2(20, 20);
+Sphere sphere3(20, 20);
 Cylinder cylinder1(20, 20, 0.5, 0.5);
 Cylinder cylinder2(20, 20, 0.5, 0.5);
 Box box1;
+Box box2;
 
-// Descomentar
-// GLuint textureID1;
+// Descomentar buffer del texturizado
+GLuint textureID1, textureID2, textureID3;
 
 bool exitApp = false;
 int lastMousePosX, offsetX = 0;
@@ -125,7 +127,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	shader.initialize("../Shaders/colorShader.vs", "../Shaders/colorShader.fs");
 	//Descomentar
-	//shaderTexture.initialize("../Shaders/texturizado.vs", "../Shaders/texturizado.fs");
+	shaderTexture.initialize("../Shaders/texturizado.vs", "../Shaders/texturizado.fs");
 
 	// Inicializar los buffers VAO, VBO, EBO
 	sphere1.init();
@@ -145,18 +147,35 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	cylinder1.setShader(&shader);
 	cylinder1.setColor(glm::vec4(0.3, 0.3, 1.0, 1.0));
 
+	cylinder2.init();
+	cylinder2.setShader(&shaderTexture);
+
 	box1.init();
-	box1.setShader(&shader);
+	//settea el shader a utilizar
+	box1.setShader(&shaderTexture);
 	box1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 	camera->setPosition(glm::vec3(0.0, 0.0, 4.0));
 
+	box2.init();
+	//settea el shader a utilizar
+	box2.setShader(&shaderTexture);
+
+	sphere3.init();
+	sphere3.setShader(&shaderTexture);
+
 	// Descomentar
-	/*int imageWidth, imageHeight;
+	//definimos el tamanio de la imagen 
+	int imageWidth, imageHeight;
+	//definimos la textura a utilizar
 	Texture texture1("../Textures/sponge.jpg");
+	//carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
 	FIBITMAP *bitmap = texture1.loadImage();
+	//convertimos el mapa de bits en una arreglo unidiemnsional de tipo unsigned
 	unsigned char *data = texture1.convertToData(bitmap, imageWidth,
 			imageHeight);
+	//creando la textura con id 1
 	glGenTextures(1, &textureID1);
+	//enlazar esa textura a un tipo de textura de 2d
 	glBindTexture(GL_TEXTURE_2D, textureID1);
 	// set the texture wrapping parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
@@ -164,13 +183,86 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// set texture filtering parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//verifica si se pudo abrir la textura
 	if (data) {
+		//tranferir los dtos de la imagen a memoria
+		//pararametros; tipos de textura, niveles de bit maps, formato interno de opengl, ancho, alto, bitmap, 
+		//formato interno de la imagen, típo de dtao, apuntador  a los datos
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0,
 		GL_BGRA, GL_UNSIGNED_BYTE, data);
+		//genera los niveles del mimap opengl es el encargado de realizarlo
 		glGenerateMipmap(GL_TEXTURE_2D);
 	} else
 		std::cout << "Failed to load texture" << std::endl;
-	texture1.freeImage(bitmap);*/
+	//libera la memoria de la textura
+	texture1.freeImage(bitmap);
+
+	//definimos la textura 2 a utilizar
+	Texture texture2("../Textures/water.jpg");
+	//carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
+	bitmap = texture2.loadImage();
+	//convertimos el mapa de bits en una arreglo unidiemnsional de tipo unsigned
+	data = texture2.convertToData(bitmap, imageWidth,
+		imageHeight);
+	//creando la textura con id 1
+	glGenTextures(1, &textureID2);
+	//enlazar esa textura a un tipo de textura de 2d
+	glBindTexture(GL_TEXTURE_2D, textureID2);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//verifica si se pudo abrir la textura
+	if (data) {
+		//tranferir los dtos de la imagen a memoria
+		//pararametros; tipos de textura, niveles de bit maps, formato interno de opengl, ancho, alto, bitmap, 
+		//formato interno de la imagen, típo de dtao, apuntador  a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0,
+			GL_BGRA, GL_UNSIGNED_BYTE, data);
+		//genera los niveles del mimap opengl es el encargado de realizarlo
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load texture" << std::endl;
+	//libera la memoria de la textura
+	texture2.freeImage(bitmap);
+
+
+	//definimos la textura 3 a utilizar
+	Texture texture3("../Textures/goku.png");
+	//carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
+	bitmap = texture3.loadImage(true); //voltear la imagen 
+	//convertimos el mapa de bits en una arreglo unidiemnsional de tipo unsigned
+	data = texture3.convertToData(bitmap, imageWidth,
+		imageHeight);
+	//creando la textura con id 1
+	glGenTextures(1, &textureID3);
+	//enlazar esa textura a un tipo de textura de 2d
+	glBindTexture(GL_TEXTURE_2D, textureID3);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//verifica si se pudo abrir la textura
+	if (data) {
+		//tranferir los dtos de la imagen a memoria
+		//pararametros; tipos de textura, niveles de bit maps, formato interno de opengl, ancho, alto, bitmap, 
+		//formato interno de la imagen, típo de dtao, apuntador  a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0,
+			GL_BGRA, GL_UNSIGNED_BYTE, data);
+		//genera los niveles del mimap opengl es el encargado de realizarlo
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load texture" << std::endl;
+	//libera la memoria de la textura
+	texture3.freeImage(bitmap);
+
+
 
 }
 
@@ -288,6 +380,7 @@ void applicationLoop() {
 	bool psi = true;
 
 	glm::mat4 model = glm::mat4(1.0f);
+	float offX = 0.0;
 	while (psi) {
 		psi = processInput(true);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -299,17 +392,21 @@ void applicationLoop() {
 		shader.setMatrix4("projection", 1, false, glm::value_ptr(projection));
 		shader.setMatrix4("view", 1, false, glm::value_ptr(view));
 		//Descomentar
-		/*shaderTexture.setMatrix4("projection", 1, false, glm::value_ptr(projection));
-		shaderTexture.setMatrix4("view", 1, false, glm::value_ptr(view));*/
+		//settea la matriz vista y proyeciion al nuevo shader
+		shaderTexture.setMatrix4("projection", 1, false, glm::value_ptr(projection));
+		shaderTexture.setMatrix4("view", 1, false, glm::value_ptr(view));
 
 		model = glm::translate(model, glm::vec3(0, 0, dz));
 		model = glm::rotate(model, rot0, glm::vec3(0, 1, 0));
 		//box1.enableWireMode();
 		//Descomentar
-		//glBindTexture(GL_TEXTURE_2D, textureID1);
+		//usamos la textura id 1
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
 		box1.render(glm::scale(model, glm::vec3(1.0, 1.0, 0.1)));
 		//Descomentar
-		//glBindTexture(GL_TEXTURE_2D, 0);
+		//sirve para no utilizar ninguna textura
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 
 		// Articulacion 1
@@ -347,10 +444,40 @@ void applicationLoop() {
 		//sphere2.enableWireMode();
 		sphere2.render(glm::scale(ojo2, glm::vec3(0.2, 0.2, 0.1)));
 
+		glm::mat4 modelAgua = glm::mat4(1.0);
+		modelAgua = glm::translate(modelAgua, glm::vec3(0.0, -3.0, 0.0));
+		modelAgua = glm::scale(modelAgua, glm::vec3(5.0, 0.0, 5.0));
+		//se activa la textura del agua
+		glBindTexture(GL_TEXTURE_2D, textureID2);
+		shaderTexture.setFloat("offsetX", offX);
+		box2.render(modelAgua);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glm::mat4 modelSphere = glm::mat4(1.0);
+		modelSphere = glm::translate(modelSphere, glm::vec3(3.0, 0.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID3);
+		shaderTexture.setFloat("offsetX", 0);
+		sphere3.render(modelSphere);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glm::mat4 modelCylinder = glm::mat4(1.0);
+		modelCylinder = glm::translate(modelCylinder, glm::vec3(-3.0, 0.0, 0.0));
+		modelAgua = glm::scale(modelAgua, glm::vec3(5.0, 0.0, 5.0));
+		//se activa la textura del agua
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks () * 6, modelCylinder);
+		glBindTexture(GL_TEXTURE_2D, textureID2);
+		cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks() * 6 + cylinder2.getSlices(), modelCylinder);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		//codigo que nos va a mandar
+		
+
 		shader.turnOff();
 
 		dz = 0;
 		rot0 = 0;
+		offX += 0.001;
 
 		glfwSwapBuffers(window);
 	}
@@ -362,3 +489,5 @@ int main(int argc, char ** argv) {
 	destroy();
 	return 1;
 }
+
+//tarea mapear todas las caras del cubo
