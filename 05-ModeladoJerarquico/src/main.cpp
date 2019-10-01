@@ -342,7 +342,7 @@ void applicationLoop() {
 		model2 = glm::translate(model2, glm::vec3(0, 0, dz));
 		model2 = glm::rotate(model2, rotacion, glm::vec3(0, 1, 0));
 
-		/*
+		
 		//modelo bob esponja
 		//box1.enableWireMode();
 		box1.render(glm::scale(model, glm::vec3(1.0, 1.0, 0.1)));
@@ -475,8 +475,9 @@ void applicationLoop() {
 
 		//zapato
 		glm::mat4 j10 = glm::translate(j7, glm::vec3(0.0, -0.58, 0.0));
-		sphere3.render(glm::scale(j10, glm::vec3(0.1, 0.1, 0.1)));*/
+		sphere3.render(glm::scale(j10, glm::vec3(0.1, 0.1, 0.1)));
 
+/*
 		//modelo Raulito
 		//cabeza
 		sphere4.render(glm::scale(model2, glm::vec3(1.0, -1.3, 0.1)));
@@ -532,7 +533,7 @@ void applicationLoop() {
 		//base
 		glm::mat4 base = glm::translate(cuerpo, glm::vec3(0.0, -0.4, 0.0));
 		cylinder3.render(glm::scale(cuerpo, glm::vec3(1.0, -1.0, 0.5)));
-
+*/
 
 		shader.turnOff();
 
