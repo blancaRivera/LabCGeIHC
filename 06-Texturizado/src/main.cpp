@@ -40,24 +40,33 @@ Shader shaderTexture;
 
 std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
 
+// Descomentar buffer del texturizado
+GLuint textureID1, textureID2, textureID3, textureID4;
+
 Sphere sphere1(20, 20);
 Sphere sphere2(20, 20);
-Sphere sphere3(20, 20);
+Sphere sphere3(10, 10);
+Sphere sphere4(10, 10);
+Sphere sphere5(10, 10);
+Sphere sphere7(10, 10);
 Cylinder cylinder1(20, 20, 0.5, 0.5);
-Cylinder cylinder2(20, 20, 0.5, 0.5);
 Box box1;
 Box box2;
+Box box3;
 
-// Descomentar buffer del texturizado
-GLuint textureID1, textureID2, textureID3;
+Cylinder cylinder2(10, 10, 0.5, 0.5);
+Cylinder cylinder3(10, 10, 0.5, 0.5);
 
 bool exitApp = false;
 int lastMousePosX, offsetX = 0;
 int lastMousePosY, offsetY = 0;
 
-float rot0 = 0.0, dz = 0.0;
+float rot0 = 0, dz = 0, rotacion=0;
 
-float rot1 = 0.0, rot2 = 0.0, rot3 = 0.0, rot4 = 0.0;
+float rot1 = 0.0, rot2 = 0.0, rot3=0.0, rot4=0.0, rot5 = 0.0, rot6 = 0.0, rot7 = 0.0, rot8 = 0.0;
+float ro1 = 0.0, ro2 = 0.0, ro3 = 0.0, ro4 = 0.0, ro5 = 0.0, ro6 = 0.0, ro7 = 0.0, ro8 = 0.0;
+
+
 bool sentido = true;
 
 double deltaTime;
@@ -134,7 +143,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Método setter que colocar el apuntador al shader
 	sphere1.setShader(&shader);
 	//Setter para poner el color de la geometria
-	sphere1.setColor(glm::vec4(0.3, 0.3, 1.0, 1.0));
+	sphere1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	// Inicializar los buffers VAO, VBO, EBO
 	sphere2.init();
@@ -143,9 +152,18 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//Setter para poner el color de la geometria
 	sphere2.setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
+	// Inicializar los buffers VAO, VBO, EBO
+	sphere7.init();
+	// Método setter que colocar el apuntador al shader
+	sphere7.setShader(&shaderTexture);
+	//Setter para poner el color de la geometria
+	sphere7.setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+	camera->setPosition(glm::vec3(0.0, 0.0, 4.0));
+
 	cylinder1.init();
-	cylinder1.setShader(&shader);
-	cylinder1.setColor(glm::vec4(0.3, 0.3, 1.0, 1.0));
+	cylinder1.setShader(&shaderTexture);
+	cylinder1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
+	camera->setPosition(glm::vec3(0.0, 0.0, 4.0));
 
 	cylinder2.init();
 	cylinder2.setShader(&shaderTexture);
@@ -157,11 +175,17 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	camera->setPosition(glm::vec3(0.0, 0.0, 4.0));
 
 	box2.init();
-	//settea el shader a utilizar
-	box2.setShader(&shaderTexture);
+	box2.setShader(&shader);
+	box2.setColor(glm::vec4(0.60, 0.40, 0.24, 1.0));
+	box2.init();
+
+	box3.init();
+	box3.setShader(&shaderTexture);
+	box3.setColor(glm::vec4(0.60, 0.40, 0.24, 1.0));
+	camera->setPosition(glm::vec3(0.0, 0.0, 4.0));
 
 	sphere3.init();
-	sphere3.setShader(&shaderTexture);
+	sphere3.setShader(&shader);
 
 	// Descomentar
 	//definimos el tamanio de la imagen 
@@ -262,6 +286,37 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//libera la memoria de la textura
 	texture3.freeImage(bitmap);
 
+	//definimos la textura 4 a utilizar
+	Texture texture4("../Textures/coca_cola.jpg");
+	//carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
+	bitmap = texture4.loadImage(true); //voltear la imagen 
+	//convertimos el mapa de bits en una arreglo unidiemnsional de tipo unsigned
+	data = texture4.convertToData(bitmap, imageWidth,
+		imageHeight);
+	//creando la textura con id 1
+	glGenTextures(1, &textureID4);
+	//enlazar esa textura a un tipo de textura de 2d
+	glBindTexture(GL_TEXTURE_2D, textureID4);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//verifica si se pudo abrir la textura
+	if (data) {
+		//tranferir los dtos de la imagen a memoria
+		//pararametros; tipos de textura, niveles de bit maps, formato interno de opengl, ancho, alto, bitmap, 
+		//formato interno de la imagen, típo de dtao, apuntador  a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0,
+			GL_BGRA, GL_UNSIGNED_BYTE, data);
+		//genera los niveles del mimap opengl es el encargado de realizarlo
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load texture" << std::endl;
+	//libera la memoria de la textura
+	texture3.freeImage(bitmap);
 
 
 }
@@ -342,25 +397,57 @@ bool processInput(bool continueApplication) {
 	offsetX = 0;
 	offsetY = 0;
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		sentido = false;
+	//movimiento en brazos
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		sentido = true;
 
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && sentido)
 		rot1 += 0.001;
-	else if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !sentido)
+	else if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && sentido)
 		rot1 -= 0.001;
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS
-			&& glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && sentido)
 		rot2 += 0.001;
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS
-			&& glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-		rot2 -= 0.001;
 	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && sentido)
 		rot3 += 0.001;
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && sentido)
 		rot4 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && sentido)
+		rot5 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && sentido)
+		rot6 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS && sentido)
+		rot7 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS && sentido)
+		rot8 += 0.001;
 
+	sentido = false;
 
+	//movimiento en piernas
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		sentido = true;
+
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && sentido)
+		ro1 += 0.001;
+	else if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && sentido)
+		ro1 -= 0.001;
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && sentido)
+		ro2 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && sentido)
+		ro3 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && sentido)
+		ro4 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && sentido)
+		ro5 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && sentido)
+		ro6 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS && sentido)
+		ro7 += 0.001;
+	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS && sentido)
+		ro8 += 0.001;
+
+	sentido = false;
+
+	//movimiento de avance y rotacion
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		rot0 = 0.0001;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -370,7 +457,6 @@ bool processInput(bool continueApplication) {
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		dz = -0.0001;
 
-	sentido = true;
 
 	glfwPollEvents();
 	return continueApplication;
@@ -398,8 +484,10 @@ void applicationLoop() {
 
 		model = glm::translate(model, glm::vec3(0, 0, dz));
 		model = glm::rotate(model, rot0, glm::vec3(0, 1, 0));
+
+
+		//modelo bob esponja
 		//box1.enableWireMode();
-		//Descomentar
 		//usamos la textura id 1
 		glBindTexture(GL_TEXTURE_2D, textureID1);
 		shaderTexture.setFloat("offsetX", 0);
@@ -408,41 +496,170 @@ void applicationLoop() {
 		//sirve para no utilizar ninguna textura
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+		//pantalon
+		glm::mat4 p1 = glm::translate(model, glm::vec3(0.0, -0.4, 0.0));
+		box2.render(glm::scale(p1, glm::vec3(1.0, 0.2, 0.5)));
 
 		// Articulacion 1
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
 		glm::mat4 j1 = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
-		j1 = glm::rotate(j1, rot1, glm::vec3(0, 0, 1));
-		j1 = glm::rotate(j1, rot2, glm::vec3(0, 1, 0));
-		sphere1.enableWireMode();
 		sphere1.render(glm::scale(j1, glm::vec3(0.1, 0.1, 0.1)));
+		j1 = glm::rotate(j1, rot1, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		j1 = glm::rotate(j1, rot2, glm::vec3(0, 1, 0));			//hacemos una rotacion en el eje y
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Hueso 1
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
 		glm::mat4 l1 = glm::translate(j1, glm::vec3(0.25f, 0.0, 0.0));
 		l1 = glm::rotate(l1, glm::radians(90.0f), glm::vec3(0, 0, 1.0));
-		cylinder1.enableWireMode();
 		cylinder1.render(glm::scale(l1, glm::vec3(0.1, 0.5, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Articulacion 2
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
 		glm::mat4 j2 = glm::translate(j1, glm::vec3(0.5, 0.0f, 0.0f));
-		j2 = glm::rotate(j2, rot3, glm::vec3(0.0, 0.0, 1.0));
-		j2 = glm::rotate(j2, rot4, glm::vec3(1.0, 0.0, 0.0));
-		sphere1.enableWireMode();
+		j2 = glm::rotate(j2, rot3, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		j2 = glm::rotate(j2, rot4, glm::vec3(1, 0, 0));			//hacemos una rotacion en el eje x
 		sphere1.render(glm::scale(j2, glm::vec3(0.1, 0.1, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Hueso 2
-		glm::mat4 l2 = glm::translate(j2, glm::vec3(0.25, 0.0, 0.0));
-		l2 = glm::rotate(l2, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l2 = glm::translate(j2, glm::vec3(0.15, 0.0, 0.0));
+		l2 = glm::rotate(l2, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.1));
 		//cylinder1.enableWireMode();
-		cylinder1.render(glm::scale(l2, glm::vec3(0.1, 0.5, 0.1)));
+		cylinder1.render(glm::scale(l2, glm::vec3(0.1, 0.25, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Ojo
 		glm::mat4 ojo = glm::translate(model, glm::vec3(0.25, 0.25, 0.05));
 		//sphere1.enableWireMode();
-		sphere1.render(glm::scale(ojo, glm::vec3(0.2, 0.2, 0.1)));
+		sphere2.render(glm::scale(ojo, glm::vec3(0.2, 0.2, 0.1)));
 
 		glm::mat4 ojo2 = glm::translate(model, glm::vec3(-0.25, 0.25, 0.05));
 		//sphere2.enableWireMode();
 		sphere2.render(glm::scale(ojo2, glm::vec3(0.2, 0.2, 0.1)));
+
+		glm::mat4 ojoi = glm::translate(model, glm::vec3(0.25, 0.25, 0.5));
+		sphere3.render(glm::scale(ojo, glm::vec3(0.1, 0.1, 0.2)));
+
+		glm::mat4 ojo2i = glm::translate(model, glm::vec3(-0.25, 0.25, 0.5));
+		sphere3.render(glm::scale(ojo2, glm::vec3(0.1, 0.1, 0.2)));
+
+		//brazo derecho
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 j3 = glm::translate(model, glm::vec3(-0.5f, 0.0, 0.0));
+		sphere1.render(glm::scale(j3, glm::vec3(0.1, 0.1, 0.1)));
+		j3 = glm::rotate(j3, rot5, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		j3 = glm::rotate(j3, rot6, glm::vec3(0, 1, 0));			//hacemos una rotacion en el eje y
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//hueso tres
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l3 = glm::translate(j3, glm::vec3(-0.25, 0.0, 0.0));
+		l3 = glm::rotate(l3, glm::radians(90.0f), glm::vec3(0, 0, 0.1));
+		cylinder1.render(glm::scale(l3, glm::vec3(0.1, 0.5, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//segunda articulacion
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 j4 = glm::translate(j3, glm::vec3(-0.5, 0.0, 0.0));
+		j4 = glm::rotate(j4, rot7, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		j4 = glm::rotate(j4, rot8, glm::vec3(1, 0, 0));			//hacemos una rotacion en el eje x
+		sphere1.render(glm::scale(j4, glm::vec3(0.1, 0.1, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//hueso cuatro
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l4 = glm::translate(j4, glm::vec3(-0.15, 0.0, 0.0));
+		l4 = glm::rotate(l4, glm::radians(90.0f), glm::vec3(0.0, 0.0, -1.1));
+		cylinder1.render(glm::scale(l4, glm::vec3(0.1, 0.25, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//pierna derecha
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 j5 = glm::translate(model, glm::vec3(-0.25, -0.5, 0.0));
+		sphere1.render(glm::scale(j5, glm::vec3(0.1, 0.1, 0.1)));
+		j5 = glm::rotate(j5, ro1, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		j5 = glm::rotate(j5, ro2, glm::vec3(0, 1, 0));			//hacemos una rotacion en el eje y
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//hueso cinco
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l5 = glm::translate(j5, glm::vec3(0.0, -0.15, 0.0));
+		l5 = glm::rotate(l5, glm::radians(00.0f), glm::vec3(0, 0, 0.1));
+		cylinder1.render(glm::scale(l5, glm::vec3(0.1, 0.25, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//segunda articulacion
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 j6 = glm::translate(j5, glm::vec3(0.0, -0.30, 0.0));
+		j6 = glm::rotate(j6, ro3, glm::vec3(0, 1, 0));			//hacemos una rotacion en el eje z
+		sphere1.render(glm::scale(j6, glm::vec3(0.1, 0.1, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//hueso seis
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l6 = glm::translate(j5, glm::vec3(0.0, -0.4, 0.0));
+		l6 = glm::rotate(l6, glm::radians(00.0f), glm::vec3(0.0, 0.0, -1.1));
+		cylinder1.render(glm::scale(l6, glm::vec3(0.1, 0.25, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//zapato
+		glm::mat4 j11 = glm::translate(j5, glm::vec3(0.0, -0.58, 0.0));
+		sphere3.render(glm::scale(j11, glm::vec3(0.1, 0.1, 0.1)));
+
+
+		//pierna izquierda
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 j7 = glm::translate(model, glm::vec3(0.25, -0.5, 0.0));
+		sphere1.render(glm::scale(j7, glm::vec3(0.1, 0.1, 0.1)));
+		j7 = glm::rotate(j7, ro5, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		j7 = glm::rotate(j7, ro6, glm::vec3(0, 1, 0));			//hacemos una rotacion en el eje y
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//hueso seis
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l7 = glm::translate(j7, glm::vec3(0.0, -0.15, 0.0));
+		l7 = glm::rotate(l7, glm::radians(00.0f), glm::vec3(0, 0, 0.1));
+		cylinder1.render(glm::scale(l7, glm::vec3(0.1, 0.25, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//segunda articulacion
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 j8 = glm::translate(j7, glm::vec3(0.0, -0.25, 0.0));
+		j8 = glm::rotate(j8, ro7, glm::vec3(0, 0, 1));			//hacemos una rotacion en el eje z
+		sphere1.render(glm::scale(j8, glm::vec3(0.1, 0.1, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//hueso siete
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+		shaderTexture.setFloat("offsetX", 0);
+		glm::mat4 l8 = glm::translate(j7, glm::vec3(0.0, -0.4, 0.0));
+		l8 = glm::rotate(l8, glm::radians(00.0f), glm::vec3(0.0, 0.0, -1.1));
+		cylinder1.render(glm::scale(l8, glm::vec3(0.1, 0.25, 0.1)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//zapato
+		glm::mat4 j10 = glm::translate(j7, glm::vec3(0.0, -0.58, 0.0));
+		sphere3.render(glm::scale(j10, glm::vec3(0.1, 0.1, 0.1)));
+
+
 
 		glm::mat4 modelAgua = glm::mat4(1.0);
 		modelAgua = glm::translate(modelAgua, glm::vec3(0.0, -3.0, 0.0));
@@ -450,27 +667,39 @@ void applicationLoop() {
 		//se activa la textura del agua
 		glBindTexture(GL_TEXTURE_2D, textureID2);
 		shaderTexture.setFloat("offsetX", offX);
-		box2.render(modelAgua);
+		box3.render(modelAgua);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glm::mat4 modelSphere = glm::mat4(1.0);
 		modelSphere = glm::translate(modelSphere, glm::vec3(3.0, 0.0, 0.0));
 		glBindTexture(GL_TEXTURE_2D, textureID3);
 		shaderTexture.setFloat("offsetX", 0);
-		sphere3.render(modelSphere);
+		sphere7.render(modelSphere);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+		//lata de coca cola
 		glm::mat4 modelCylinder = glm::mat4(1.0);
 		modelCylinder = glm::translate(modelCylinder, glm::vec3(-3.0, 0.0, 0.0));
-		modelAgua = glm::scale(modelAgua, glm::vec3(5.0, 0.0, 5.0));
-		//se activa la textura del agua
-		glBindTexture(GL_TEXTURE_2D, textureID1);
 		shaderTexture.setFloat("offsetX", 0);
-		cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks () * 6, modelCylinder);
-		glBindTexture(GL_TEXTURE_2D, textureID2);
-		cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks() * 6 + cylinder2.getSlices(), modelCylinder);
+		// Envolvente desde el indice 0, el tamanio es 20 * 20 * 6
+		// Se usa la textura 1 ( Bon sponja)
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks() * 6,
+				modelCylinder);
+		// Tapa Superior desde el indice : 20 * 20 * 6, el tamanio de indices es 20 * 3
+		// Se usa la textura 2 ( Agua )
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		cylinder2.render(cylinder2.getSlices() * cylinder2.getStacks() * 6,
+				cylinder2.getSlices() * 3,
+				modelCylinder);
+		// Tapa inferior desde el indice : 20 * 20 * 6 + 20 * 3, el tamanio de indices es 20 * 3
+		// Se usa la textura 3 ( Goku )
+		glBindTexture(GL_TEXTURE_2D, textureID3);
+		cylinder2.render(cylinder2.getSlices() * cylinder2.getStacks() * 6 + cylinder2.getSlices() * 3,
+				cylinder2.getSlices() * 3,
+				modelCylinder);
+
 		glBindTexture(GL_TEXTURE_2D, 0);
-		//codigo que nos va a mandar
 		
 
 		shader.turnOff();

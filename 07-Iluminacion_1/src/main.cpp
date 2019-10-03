@@ -41,6 +41,7 @@ Shader shader;
 Shader shaderTexture;
 // Descomentar El shader para iluminacion
 Shader shaderColorLighting;
+Shader shaderTextureLighting; //es el sheder de la iluminacion para la textura
 
 std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
 
@@ -136,6 +137,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	shaderColorLighting.initialize("../Shaders/iluminacion_color.vs",
 			"../Shaders/iluminacion_color.fs");
 
+	shaderTextureLighting.initialize("../Shaders/iluminacion_texture_res.vs",
+		"../Shaders/iluminacion_texture_res.fs");
+
 	// Inicializar los buffers VAO, VBO, EBO
 	sphere1.init();
 	// Método setter que colocar el apuntador al shader
@@ -167,7 +171,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	box1.init();
 	// Settea el shader a utilizar
-	box1.setShader(&shaderTexture);
+	box1.setShader(&shaderTextureLighting); //shader de iluminacion a la textura
 	box1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	box2.init();
@@ -291,7 +295,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Enlazar esa textura a una tipo de textura de 2D.
 	glBindTexture(GL_TEXTURE_2D, textureID4);
 	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // set texture wrapping to GL_REPEAT (default wrapping method)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// set texture filtering parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -460,6 +464,15 @@ void applicationLoop() {
 						glm::vec4(
 								lightModelmatrix
 										* glm::vec4(0.0, 0.0, 0.0, 1.0))));
+
+		// iliminacion de la textura
+		shaderTextureLighting.setMatrix4("projection", 1, false, glm::value_ptr(projection));
+		shaderTextureLighting.setMatrix4("view", 1, false, glm::value_ptr(view));
+		shaderTextureLighting.setVectorFloat3("viewPos", glm::value_ptr(camera->getPosition()));
+		shaderTextureLighting.setVectorFloat3("light.ambient", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		shaderTextureLighting.setVectorFloat3("light.diffuse", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		shaderTextureLighting.setVectorFloat3("light.specular", glm::value_ptr(glm::vec3(0.9, 0.0, 0.0)));
+
 		sphereLamp.render(lightModelmatrix);
 
 		model = glm::translate(model, glm::vec3(0, 0, dz));
