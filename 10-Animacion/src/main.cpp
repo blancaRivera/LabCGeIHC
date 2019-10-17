@@ -72,6 +72,7 @@ Box box1;
 Box box2;
 Box box3;
 Box boxCesped;
+Box boxWall;
 // Models complex instances
 Model modelRock;
 Model modelRailRoad;
@@ -239,6 +240,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	boxCesped.init();
 	boxCesped.setShader(&shaderMulLighting);
+
+	boxWall.init();
+	boxWall.setShader(&shaderMulLighting);
 
 	modelRock.loadModel("../models/rock/rock.obj");
 	modelRock.setShader(&shaderMulLighting);
@@ -643,14 +647,55 @@ void applicationLoop() {
 		shaderMulLighting.setInt("spotLightCount", 1);
 		shaderMulLighting.setVectorFloat3("spotLights[0].position", glm::value_ptr(camera->getPosition()));
 		shaderMulLighting.setVectorFloat3("spotLights[0].direction", glm::value_ptr(camera->getFront()));
-		shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.1, 0.1, 0.1)));
+		shaderMulLighting.setVectorFloat3("spotLights[0].light.ambient", glm::value_ptr(glm::vec3(0.01, 0.01, 0.01)));
 		shaderMulLighting.setVectorFloat3("spotLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
 		shaderMulLighting.setVectorFloat3("spotLights[0].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.6)));
 		shaderMulLighting.setFloat("spotLights[0].cutOff", cos(glm::radians(12.5)));
 		shaderMulLighting.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0)));
 		shaderMulLighting.setFloat("spotLights[0].constant", 1.0);
 		shaderMulLighting.setFloat("spotLights[0].linear", 0.1);
-		shaderMulLighting.setFloat("spotLights[0].quadratic", 0.05);
+		shaderMulLighting.setFloat("spotLights[0].quadratic", 0.001);
+
+		// Esto es para la luces pointlights
+		shaderMulLighting.setInt("pointLightCount", 3);
+		shaderMulLighting.setVectorFloat3("pointLights[0].position", glm::value_ptr((glm::vec3(-5.1, 4.5, -3.5))));
+		shaderMulLighting.setVectorFloat3("pointLights[0].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
+		shaderMulLighting.setVectorFloat3("pointLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[0].light.specular", glm::value_ptr(glm::vec3(0.0, 0.6, 0.0)));
+		shaderMulLighting.setFloat("pointLights[0].constant", 1.0);
+		shaderMulLighting.setFloat("pointLights[0].linear", 0.04);
+		shaderMulLighting.setFloat("pointLights[0].quadratic", 0.004);
+
+		shaderMulLighting.setVectorFloat3("pointLights[1].position", glm::value_ptr((glm::vec3(-5.1, 4.8, -5.0))));
+		shaderMulLighting.setVectorFloat3("pointLights[1].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
+		shaderMulLighting.setVectorFloat3("pointLights[1].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[1].light.specular", glm::value_ptr(glm::vec3(0.6, 0.0, 0.0)));
+		shaderMulLighting.setFloat("pointLights[1].constant", 1.0);
+		shaderMulLighting.setFloat("pointLights[1].linear", 0.04);
+		shaderMulLighting.setFloat("pointLights[1].quadratic", 0.004);
+
+		shaderMulLighting.setVectorFloat3("pointLights[2].position", glm::value_ptr((glm::vec3(-5.1, 4.5, -6.5))));
+		shaderMulLighting.setVectorFloat3("pointLights[2].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
+		shaderMulLighting.setVectorFloat3("pointLights[2].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[2].light.specular", glm::value_ptr(glm::vec3(0.0, 0.0, 0.6)));
+		shaderMulLighting.setFloat("pointLights[2].constant", 1.0);
+		shaderMulLighting.setFloat("pointLights[2].linear", 0.04);
+		shaderMulLighting.setFloat("pointLights[2].quadratic", 0.004);
+
+		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
+		sphereLamp.setPosition(glm::vec3(-5.1, 4.5, -3.5));
+		sphereLamp.setColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
+		sphereLamp.render();
+
+		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
+		sphereLamp.setPosition(glm::vec3(-5.1, 4.8, -5.0));
+		sphereLamp.setColor(glm::vec4(1.0, 0.0, 0.0, 1.0));
+		sphereLamp.render();
+
+		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
+		sphereLamp.setPosition(glm::vec3(-5.1, 4.5, -6.5));
+		sphereLamp.setColor(glm::vec4(0.0, 0.0, 1.0, 1.0));
+		sphereLamp.render();
 
 		glm::mat4 lightModelmatrix = glm::rotate(glm::mat4(1.0f), angle,
 				glm::vec3(1.0f, 0.0f, 0.0f));
@@ -676,6 +721,9 @@ void applicationLoop() {
 						glm::vec4(
 								lightModelmatrix
 									* glm::vec4(0.0, 0.0, 0.0, 1.0))));
+		sphereLamp.setScale(glm::vec3(1, 1, 1));
+		sphereLamp.setPosition(glm::vec3(0, 0, 0));
+		sphereLamp.setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 		sphereLamp.render(lightModelmatrix);
 
 		model = glm::translate(model, glm::vec3(0, 0, dz));
@@ -774,9 +822,11 @@ void applicationLoop() {
 		cubeTextureModel = glm::translate(cubeTextureModel,
 				glm::vec3(-5.0, 0.5, 3.0));
 		glBindTexture(GL_TEXTURE_2D, textureID4);
-		shaderTexture.setVectorFloat2("scaleUV",
+		shaderMulLighting.setVectorFloat2("scaleUV",
 				glm::value_ptr(glm::vec2(2.0, 1.0)));
 		box3.render(cubeTextureModel);
+		shaderMulLighting.setVectorFloat2("scaleUV",
+				glm::value_ptr(glm::vec2(0.0, 0.0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Render del cyindro con materiales
@@ -808,6 +858,29 @@ void applicationLoop() {
 		modelRailRoad.render(matrixModelRailroad);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
+
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+		boxWall.setPosition(glm::vec3(-10.0, 2.5, 0.0));
+		boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));
+		boxWall.render();
+		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+		boxWall.setPosition(glm::vec3(-15.0, 2.5, -5.0));
+		boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
+		boxWall.render();
+		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+		boxWall.setPosition(glm::vec3(-5.0, 2.5, -5.0));
+		boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
+		boxWall.render();
+		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+		boxWall.setPosition(glm::vec3(-10.0, 2.5, -10.0));
+		boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));
+		boxWall.render();
+		boxWall.setScale(glm::vec3(12.0, 12.0, 0.05));
+		boxWall.setPosition(glm::vec3(-10.0, 5, -5.0));
+		boxWall.setOrientation(glm::vec3(90.0, 0.0, 0.0));
+		boxWall.render();
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glm::mat4 matrixModelAircraft = glm::mat4(1.0);
 		matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(8.0, 2.0, -10.0));
