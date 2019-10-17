@@ -1,4 +1,4 @@
-/*#define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #include <cmath>
 //glew include
 #include <GL/glew.h>
@@ -71,7 +71,7 @@ Box box1;
 Box box2;
 Box box3;
 
-GLuint textureID1, textureID2, textureID3, textureID4;
+GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6, textureID7;
 // Descomentar
 GLuint skyboxTextureID;
 //defincion de las caras del cubo de skybox
@@ -83,12 +83,13 @@ GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
 //texturas de cada cara del cubo
-std::string fileNames[6] = { "../Textures/mp_petesoasis/petesoasis_ft.tga",
-		"../Textures/mp_petesoasis/petesoasis_bk.tga",
-		"../Textures/mp_petesoasis/petesoasis_up.tga",
-		"../Textures/mp_petesoasis/petesoasis_dn.tga",
-		"../Textures/mp_petesoasis/petesoasis_rt.tga",
-		"../Textures/mp_petesoasis/petesoasis_lf.tga" };
+std::string fileNames[6] = { 
+	    "../Textures/mp_rainforest/rainforest_ft.tga",
+		"../Textures/mp_rainforest/rainforest_bk.tga",
+		"../Textures/mp_rainforest/rainforest_up.tga",
+		"../Textures/mp_rainforest/rainforest_dn.tga",
+		"../Textures/mp_rainforest/rainforest_rt.tga",
+		"../Textures/mp_rainforest/rainforest_lf.tga" };
 
 bool exitApp = false;
 int lastMousePosX, offsetX = 0;
@@ -367,6 +368,73 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Failed to load texture" << std::endl;
 	// Libera la memoria de la textura
 	texture4.freeImage(bitmap);
+
+	// Definiendo la textura a utilizar
+	Texture texture5("../Textures/piedra.jpg");
+	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
+	// Voltear la imagen
+	bitmap = texture5.loadImage(true);
+	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
+	data = texture5.convertToData(bitmap, imageWidth, imageHeight);
+	// Creando la textura con id 1
+	glGenTextures(1, &textureID5);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureID5);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	if (data) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0,
+			GL_BGRA, GL_UNSIGNED_BYTE, data);
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	texture5.freeImage(bitmap);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Definiendo la textura a utilizar
+	Texture texture6("../Textures/cesped.jpg");
+	// Carga el mapa de bits (FIBITMAP es el tipo de dato de la libreria)
+	// Voltear la imagen
+	bitmap = texture6.loadImage(true);
+	// Convertimos el mapa de bits en un arreglo unidimensional de tipo unsigned char
+	data = texture6.convertToData(bitmap, imageWidth, imageHeight);
+	// Creando la textura con id 1
+	glGenTextures(1, &textureID6);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureID6);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	if (data) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0,
+			GL_BGRA, GL_UNSIGNED_BYTE, data);
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	texture6.freeImage(bitmap);
+
 
 	// Descomentar
 	// Carga de texturas para el skybox
@@ -714,6 +782,1149 @@ void applicationLoop() {
 		box3.render(cubeTextureModel);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel2 = glm::mat4(3.0);
+		cubeTextureModel2 = glm::translate(cubeTextureModel2,
+			glm::vec3(1.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel2, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel3 = glm::mat4(1.0);
+		cubeTextureModel3 = glm::translate(cubeTextureModel3,
+			glm::vec3(2.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel3, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel4 = glm::mat4(1.0);
+		cubeTextureModel4 = glm::translate(cubeTextureModel4,
+			glm::vec3(3.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel4, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel5 = glm::mat4(1.0);
+		cubeTextureModel5 = glm::translate(cubeTextureModel5,
+			glm::vec3(4.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel5, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel6 = glm::mat4(1.0);
+		cubeTextureModel6 = glm::translate(cubeTextureModel6,
+			glm::vec3(5.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel6, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel7 = glm::mat4(1.0);
+		cubeTextureModel7 = glm::translate(cubeTextureModel7,
+			glm::vec3(6.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel7, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel8 = glm::mat4(1.0);
+		cubeTextureModel8 = glm::translate(cubeTextureModel8,
+			glm::vec3(7.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel8, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel9 = glm::mat4(1.0);
+		cubeTextureModel9 = glm::translate(cubeTextureModel9,
+			glm::vec3(8.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel9, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel10 = glm::mat4(1.0);
+		cubeTextureModel10 = glm::translate(cubeTextureModel10, glm::vec3(9.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel10, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel11 = glm::mat4(1.0);
+		cubeTextureModel11 = glm::translate(cubeTextureModel11, glm::vec3(10.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel11, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel12 = glm::mat4(1.0);
+		cubeTextureModel12 = glm::translate(cubeTextureModel12, glm::vec3(11.0, 2.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel12, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////Parte Trasera 1//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModell13 = glm::mat4(3.0);
+		cubeTextureModell13 = glm::translate(cubeTextureModell13,
+			glm::vec3(0.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModell13, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel13 = glm::mat4(3.0);
+		cubeTextureModel13 = glm::translate(cubeTextureModel13,
+			glm::vec3(1.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel13, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel14 = glm::mat4(1.0);
+		cubeTextureModel14 = glm::translate(cubeTextureModel14,
+			glm::vec3(2.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel14, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel15 = glm::mat4(1.0);
+		cubeTextureModel15 = glm::translate(cubeTextureModel15,
+			glm::vec3(3.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel15, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 ccubeTextureModel16 = glm::mat4(1.0);
+		ccubeTextureModel16 = glm::translate(ccubeTextureModel16,
+			glm::vec3(4.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(ccubeTextureModel16, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel17 = glm::mat4(1.0);
+		cubeTextureModel17 = glm::translate(cubeTextureModel17,
+			glm::vec3(5.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel17, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 ccubeTextureModel18 = glm::mat4(1.0);
+		ccubeTextureModel18 = glm::translate(ccubeTextureModel18,
+			glm::vec3(6.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(ccubeTextureModel18, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cucubeTextureModel19 = glm::mat4(1.0);
+		cucubeTextureModel19 = glm::translate(cucubeTextureModel19,
+			glm::vec3(7.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cucubeTextureModel19, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cucubeTextureModel20 = glm::mat4(1.0);
+		cucubeTextureModel20 = glm::translate(cucubeTextureModel20,
+			glm::vec3(8.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cucubeTextureModel20, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel21 = glm::mat4(1.0);
+		cubeTextureModel21 = glm::translate(cubeTextureModel21, glm::vec3(9.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel21, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel22 = glm::mat4(1.0);
+		cubeTextureModel22 = glm::translate(cubeTextureModel22, glm::vec3(10.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel22, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel23 = glm::mat4(1.0);
+		cubeTextureModel23 = glm::translate(cubeTextureModel23, glm::vec3(11.0, 3.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel23, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////Parte Trasera 2//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTAl13 = glm::mat4(3.0);
+		cubeTextureModelTAl13 = glm::translate(cubeTextureModelTAl13,
+			glm::vec3(0.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTAl13, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA13 = glm::mat4(3.0);
+		cubeTextureModelTA13 = glm::translate(cubeTextureModelTA13,
+			glm::vec3(1.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA13, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA14 = glm::mat4(1.0);
+		cubeTextureModelTA14 = glm::translate(cubeTextureModelTA14,
+			glm::vec3(2.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA14, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA15 = glm::mat4(1.0);
+		cubeTextureModelTA15 = glm::translate(cubeTextureModelTA15,
+			glm::vec3(3.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA15, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 ccubeTextureModelTA16 = glm::mat4(1.0);
+		ccubeTextureModelTA16 = glm::translate(ccubeTextureModelTA16,
+			glm::vec3(4.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(ccubeTextureModelTA16, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA17 = glm::mat4(1.0);
+		cubeTextureModelTA17 = glm::translate(cubeTextureModelTA17,
+			glm::vec3(5.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA17, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 ccubeTextureModelTA18 = glm::mat4(1.0);
+		ccubeTextureModelTA18 = glm::translate(ccubeTextureModelTA18,
+			glm::vec3(6.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(ccubeTextureModelTA18, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cucubeTextureModelTA19 = glm::mat4(1.0);
+		cucubeTextureModelTA19 = glm::translate(cucubeTextureModelTA19,
+			glm::vec3(7.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cucubeTextureModelTA19, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cucubeTextureModelTA20 = glm::mat4(1.0);
+		cucubeTextureModelTA20 = glm::translate(cucubeTextureModelTA20,
+			glm::vec3(8.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cucubeTextureModelTA20, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA21 = glm::mat4(1.0);
+		cubeTextureModelTA21 = glm::translate(cubeTextureModelTA21, glm::vec3(9.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA21, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA22 = glm::mat4(1.0);
+		cubeTextureModelTA22 = glm::translate(cubeTextureModelTA22, glm::vec3(10.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA22, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelTA23 = glm::mat4(1.0);
+		cubeTextureModelTA23 = glm::translate(cubeTextureModelTA23, glm::vec3(11.0, 4.0, 0.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelTA23, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////PAredes Izquierdas 0////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel24 = glm::mat4(1.0);
+		cubeTextureModel24 = glm::translate(cubeTextureModel24, glm::vec3(0.0, 2.0, 4.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel24, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel25 = glm::mat4(1.0);
+		cubeTextureModel25 = glm::translate(cubeTextureModel25, glm::vec3(0.0, 2.0, 3.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel25, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel26 = glm::mat4(1.0);
+		cubeTextureModel26 = glm::translate(cubeTextureModel26, glm::vec3(0.0, 2.0, 2.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel26, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel27 = glm::mat4(1.0);
+		cubeTextureModel27 = glm::translate(cubeTextureModel27, glm::vec3(0.0, 2.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel27, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel28 = glm::mat4(1.0);
+		cubeTextureModel28 = glm::translate(cubeTextureModel28, glm::vec3(0.0, 2.0, 5.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel28, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel34 = glm::mat4(1.0);
+		cubeTextureModel34 = glm::translate(cubeTextureModel34, glm::vec3(0.0, 2.0, 6.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel34, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel29 = glm::mat4(1.0);
+		cubeTextureModel29 = glm::translate(cubeTextureModel29, glm::vec3(0.0, 2.0, 7.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel29, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel30 = glm::mat4(1.0);
+		cubeTextureModel30 = glm::translate(cubeTextureModel30, glm::vec3(0.0, 2.0, 8.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel30, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel31 = glm::mat4(1.0);
+		cubeTextureModel31 = glm::translate(cubeTextureModel31, glm::vec3(0.0, 2.0, 9.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel31, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel32 = glm::mat4(1.0);
+		cubeTextureModel32 = glm::translate(cubeTextureModel32, glm::vec3(0.0, 2.0, 10.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel32, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModel33 = glm::mat4(1.0);
+		cubeTextureModel33 = glm::translate(cubeTextureModel33, glm::vec3(0.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModel33, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Izqueirda 1/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI24 = glm::mat4(1.0);
+		cubeTextureModelAI24 = glm::translate(cubeTextureModelAI24, glm::vec3(0.0, 3.0, 4.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI24, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI25 = glm::mat4(1.0);
+		cubeTextureModelAI25 = glm::translate(cubeTextureModelAI25, glm::vec3(0.0, 3.0, 3.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI25, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI26 = glm::mat4(1.0);
+		cubeTextureModelAI26 = glm::translate(cubeTextureModelAI26, glm::vec3(0.0, 3.0, 2.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI26, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI27 = glm::mat4(1.0);
+		cubeTextureModelAI27 = glm::translate(cubeTextureModelAI27, glm::vec3(0.0, 3.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI27, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI28 = glm::mat4(1.0);
+		cubeTextureModelAI28 = glm::translate(cubeTextureModelAI28, glm::vec3(0.0, 3.0, 5.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI28, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI34 = glm::mat4(1.0);
+		cubeTextureModelAI34 = glm::translate(cubeTextureModelAI34, glm::vec3(0.0, 3.0, 6.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI34, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI29 = glm::mat4(1.0);
+		cubeTextureModelAI29 = glm::translate(cubeTextureModelAI29, glm::vec3(0.0, 3.0, 7.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI29, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI30 = glm::mat4(1.0);
+		cubeTextureModelAI30 = glm::translate(cubeTextureModelAI30, glm::vec3(0.0, 3.0, 8.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI30, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI31 = glm::mat4(1.0);
+		cubeTextureModelAI31 = glm::translate(cubeTextureModelAI31, glm::vec3(0.0, 3.0, 9.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI31, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI32 = glm::mat4(1.0);
+		cubeTextureModelAI32 = glm::translate(cubeTextureModelAI32, glm::vec3(0.0, 3.0, 10.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI32, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI33 = glm::mat4(1.0);
+		cubeTextureModelAI33 = glm::translate(cubeTextureModelAI33, glm::vec3(0.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI33, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Izqueirda 2/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI124 = glm::mat4(1.0);
+		cubeTextureModelAI124 = glm::translate(cubeTextureModelAI124, glm::vec3(0.0, 4.0, 4.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI124, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI125 = glm::mat4(1.0);
+		cubeTextureModelAI125 = glm::translate(cubeTextureModelAI125, glm::vec3(0.0, 4.0, 3.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI125, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI126 = glm::mat4(1.0);
+		cubeTextureModelAI126 = glm::translate(cubeTextureModelAI126, glm::vec3(0.0, 4.0, 2.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI126, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI127 = glm::mat4(1.0);
+		cubeTextureModelAI127 = glm::translate(cubeTextureModelAI127, glm::vec3(0.0, 4.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI127, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI128 = glm::mat4(1.0);
+		cubeTextureModelAI128 = glm::translate(cubeTextureModelAI128, glm::vec3(0.0, 4.0, 5.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI128, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI134 = glm::mat4(1.0);
+		cubeTextureModelAI134 = glm::translate(cubeTextureModelAI134, glm::vec3(0.0, 4.0, 6.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI134, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI1129 = glm::mat4(1.0);
+		cubeTextureModelAI1129 = glm::translate(cubeTextureModelAI1129, glm::vec3(0.0, 4.0, 7.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI1129, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI1130 = glm::mat4(1.0);
+		cubeTextureModelAI1130 = glm::translate(cubeTextureModelAI1130, glm::vec3(0.0, 4.0, 8.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI1130, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI131 = glm::mat4(1.0);
+		cubeTextureModelAI131 = glm::translate(cubeTextureModelAI131, glm::vec3(0.0, 4.0, 9.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI131, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI132 = glm::mat4(1.0);
+		cubeTextureModelAI132 = glm::translate(cubeTextureModelAI132, glm::vec3(0.0, 4.0, 10.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI132, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelAI133 = glm::mat4(1.0);
+		cubeTextureModelAI133 = glm::translate(cubeTextureModelAI133, glm::vec3(0.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelAI133, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Derecha 0/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD024 = glm::mat4(1.0);
+		cubeTextureModelD024 = glm::translate(cubeTextureModelD024, glm::vec3(11.0, 2.0, 4.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD024, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD025 = glm::mat4(1.0);
+		cubeTextureModelD025 = glm::translate(cubeTextureModelD025, glm::vec3(11.0, 2.0, 3.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD025, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD026 = glm::mat4(1.0);
+		cubeTextureModelD026 = glm::translate(cubeTextureModelD026, glm::vec3(11.0, 2.0, 2.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD026, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD027 = glm::mat4(1.0);
+		cubeTextureModelD027 = glm::translate(cubeTextureModelD027, glm::vec3(11.0, 2.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD027, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD028 = glm::mat4(1.0);
+		cubeTextureModelD028 = glm::translate(cubeTextureModelD028, glm::vec3(11.0, 2.0, 5.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD028, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD034 = glm::mat4(1.0);
+		cubeTextureModelD034 = glm::translate(cubeTextureModelD034, glm::vec3(11.0, 2.0, 6.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD034, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD029 = glm::mat4(1.0);
+		cubeTextureModelD029 = glm::translate(cubeTextureModelD029, glm::vec3(11.0, 2.0, 7.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD029, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD030 = glm::mat4(1.0);
+		cubeTextureModelD030 = glm::translate(cubeTextureModelD030, glm::vec3(11.0, 2.0, 8.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD030, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD031 = glm::mat4(1.0);
+		cubeTextureModelD031 = glm::translate(cubeTextureModelD031, glm::vec3(11.0, 2.0, 9.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD031, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD032 = glm::mat4(1.0);
+		cubeTextureModelD032 = glm::translate(cubeTextureModelD032, glm::vec3(11.0, 2.0, 10.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD032, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD033 = glm::mat4(1.0);
+		cubeTextureModelD033 = glm::translate(cubeTextureModelD033, glm::vec3(11.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD033, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Derecha 1/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD124 = glm::mat4(1.0);
+		cubeTextureModelD124 = glm::translate(cubeTextureModelD124, glm::vec3(11.0, 3.0, 4.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD124, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD125 = glm::mat4(1.0);
+		cubeTextureModelD125 = glm::translate(cubeTextureModelD125, glm::vec3(11.0, 3.0, 3.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD125, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD126 = glm::mat4(1.0);
+		cubeTextureModelD126 = glm::translate(cubeTextureModelD126, glm::vec3(11.0, 3.0, 2.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD126, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD127 = glm::mat4(1.0);
+		cubeTextureModelD127 = glm::translate(cubeTextureModelD127, glm::vec3(11.0, 3.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD127, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD128 = glm::mat4(1.0);
+		cubeTextureModelD128 = glm::translate(cubeTextureModelD128, glm::vec3(11.0, 3.0, 5.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD128, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD134 = glm::mat4(1.0);
+		cubeTextureModelD134 = glm::translate(cubeTextureModelD134, glm::vec3(11.0, 3.0, 6.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD134, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD129 = glm::mat4(1.0);
+		cubeTextureModelD129 = glm::translate(cubeTextureModelD129, glm::vec3(11.0, 3.0, 7.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD129, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD130 = glm::mat4(1.0);
+		cubeTextureModelD130 = glm::translate(cubeTextureModelD130, glm::vec3(11.0, 3.0, 8.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD130, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD131 = glm::mat4(1.0);
+		cubeTextureModelD131 = glm::translate(cubeTextureModelD131, glm::vec3(11.0, 3.0, 9.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD131, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD132 = glm::mat4(1.0);
+		cubeTextureModelD132 = glm::translate(cubeTextureModelD132, glm::vec3(11.0, 3.0, 10.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD132, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD133 = glm::mat4(1.0);
+		cubeTextureModelD133 = glm::translate(cubeTextureModelD133, glm::vec3(11.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD133, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Derecha 2/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD224 = glm::mat4(1.0);
+		cubeTextureModelD224 = glm::translate(cubeTextureModelD224, glm::vec3(11.0, 4.0, 4.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD224, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD225 = glm::mat4(1.0);
+		cubeTextureModelD225 = glm::translate(cubeTextureModelD225, glm::vec3(11.0, 4.0, 3.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD225, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD226 = glm::mat4(1.0);
+		cubeTextureModelD226 = glm::translate(cubeTextureModelD226, glm::vec3(11.0, 4.0, 2.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD226, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD227 = glm::mat4(1.0);
+		cubeTextureModelD227 = glm::translate(cubeTextureModelD227, glm::vec3(11.0, 4.0, 1.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD227, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD228 = glm::mat4(1.0);
+		cubeTextureModelD228 = glm::translate(cubeTextureModelD228, glm::vec3(11.0, 4.0, 5.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD228, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD234 = glm::mat4(1.0);
+		cubeTextureModelD234 = glm::translate(cubeTextureModelD234, glm::vec3(11.0, 4.0, 6.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD234, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD229 = glm::mat4(1.0);
+		cubeTextureModelD229 = glm::translate(cubeTextureModelD229, glm::vec3(11.0, 4.0, 7.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD229, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD230 = glm::mat4(1.0);
+		cubeTextureModelD230 = glm::translate(cubeTextureModelD230, glm::vec3(11.0, 4.0, 8.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD230, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD231 = glm::mat4(1.0);
+		cubeTextureModelD231 = glm::translate(cubeTextureModelD231, glm::vec3(11.0, 4.0, 9.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD231, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD232 = glm::mat4(1.0);
+		cubeTextureModelD232 = glm::translate(cubeTextureModelD232, glm::vec3(11.0, 4.0, 10.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD232, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelD233 = glm::mat4(1.0);
+		cubeTextureModelD233 = glm::translate(cubeTextureModelD233, glm::vec3(11.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelD233, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Frontales 0/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF0 = glm::mat4(3.0);
+		cubeTextureModelF0 = glm::translate(cubeTextureModelF0,
+			glm::vec3(0.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF0, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF02 = glm::mat4(3.0);
+		cubeTextureModelF02 = glm::translate(cubeTextureModelF02,
+			glm::vec3(1.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF02, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF03 = glm::mat4(1.0);
+		cubeTextureModelF03 = glm::translate(cubeTextureModelF03,
+			glm::vec3(2.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF03, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF04 = glm::mat4(1.0);
+		cubeTextureModelF04 = glm::translate(cubeTextureModelF04,
+			glm::vec3(3.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF04, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF05 = glm::mat4(1.0);
+		cubeTextureModelF05 = glm::translate(cubeTextureModelF05,
+			glm::vec3(4.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF05, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF06 = glm::mat4(1.0);
+		cubeTextureModelF06 = glm::translate(cubeTextureModelF06,
+			glm::vec3(5.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF06, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF07 = glm::mat4(1.0);
+		cubeTextureModelF07 = glm::translate(cubeTextureModelF07,
+			glm::vec3(6.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF07, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF08 = glm::mat4(1.0);
+		cubeTextureModelF08 = glm::translate(cubeTextureModelF08,
+			glm::vec3(7.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF08, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF09 = glm::mat4(1.0);
+		cubeTextureModelF09 = glm::translate(cubeTextureModelF09,
+			glm::vec3(8.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF09, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF010 = glm::mat4(1.0);
+		cubeTextureModelF010 = glm::translate(cubeTextureModelF010, glm::vec3(9.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF010, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF011 = glm::mat4(1.0);
+		cubeTextureModelF011 = glm::translate(cubeTextureModelF011, glm::vec3(10.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF011, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF012 = glm::mat4(1.0);
+		cubeTextureModelF012 = glm::translate(cubeTextureModelF012, glm::vec3(11.0, 2.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF012, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Frontales 1/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF1 = glm::mat4(3.0);
+		cubeTextureModelF1 = glm::translate(cubeTextureModelF1,
+			glm::vec3(0.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF1, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF12 = glm::mat4(3.0);
+		cubeTextureModelF12 = glm::translate(cubeTextureModelF12,
+			glm::vec3(1.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF12, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF13 = glm::mat4(1.0);
+		cubeTextureModelF13 = glm::translate(cubeTextureModelF13,
+			glm::vec3(2.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF13, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF14 = glm::mat4(1.0);
+		cubeTextureModelF14 = glm::translate(cubeTextureModelF14,
+			glm::vec3(3.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF14, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF15 = glm::mat4(1.0);
+		cubeTextureModelF15 = glm::translate(cubeTextureModelF15,
+			glm::vec3(4.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF15, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF16 = glm::mat4(1.0);
+		cubeTextureModelF16 = glm::translate(cubeTextureModelF16,
+			glm::vec3(5.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF16, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF17 = glm::mat4(1.0);
+		cubeTextureModelF17 = glm::translate(cubeTextureModelF17,
+			glm::vec3(6.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF17, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF18 = glm::mat4(1.0);
+		cubeTextureModelF18 = glm::translate(cubeTextureModelF18,
+			glm::vec3(7.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF18, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF19 = glm::mat4(1.0);
+		cubeTextureModelF19 = glm::translate(cubeTextureModelF19,
+			glm::vec3(8.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF19, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF110 = glm::mat4(1.0);
+		cubeTextureModelF110 = glm::translate(cubeTextureModelF110, glm::vec3(9.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF110, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF111 = glm::mat4(1.0);
+		cubeTextureModelF111 = glm::translate(cubeTextureModelF111, glm::vec3(10.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF111, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF112 = glm::mat4(1.0);
+		cubeTextureModelF112 = glm::translate(cubeTextureModelF112, glm::vec3(11.0, 3.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF112, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////Paredes Frontales 2/////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF2 = glm::mat4(3.0);
+		cubeTextureModelF2 = glm::translate(cubeTextureModelF2,
+			glm::vec3(0.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF2, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF22 = glm::mat4(3.0);
+		cubeTextureModelF22 = glm::translate(cubeTextureModelF22,
+			glm::vec3(1.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF22, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF23 = glm::mat4(1.0);
+		cubeTextureModelF23 = glm::translate(cubeTextureModelF23,
+			glm::vec3(2.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF23, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF24 = glm::mat4(1.0);
+		cubeTextureModelF24 = glm::translate(cubeTextureModelF24,
+			glm::vec3(3.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF24, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF25 = glm::mat4(1.0);
+		cubeTextureModelF25 = glm::translate(cubeTextureModelF25,
+			glm::vec3(4.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF25, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF26 = glm::mat4(1.0);
+		cubeTextureModelF26 = glm::translate(cubeTextureModelF26,
+			glm::vec3(5.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF26, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF27 = glm::mat4(1.0);
+		cubeTextureModelF27 = glm::translate(cubeTextureModelF27,
+			glm::vec3(6.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF27, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF28 = glm::mat4(1.0);
+		cubeTextureModelF28 = glm::translate(cubeTextureModelF28,
+			glm::vec3(7.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF28, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF29 = glm::mat4(1.0);
+		cubeTextureModelF29 = glm::translate(cubeTextureModelF29,
+			glm::vec3(8.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV",
+			glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF29, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF210 = glm::mat4(1.0);
+		cubeTextureModelF210 = glm::translate(cubeTextureModelF210, glm::vec3(9.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF210, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF211 = glm::mat4(1.0);
+		cubeTextureModelF211 = glm::translate(cubeTextureModelF211, glm::vec3(10.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF211, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		////////////////////////////////////////////////////////////
+		glm::mat4 cubeTextureModelF212 = glm::mat4(1.0);
+		cubeTextureModelF212 = glm::translate(cubeTextureModelF212, glm::vec3(11.0, 4.0, 11.0));
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		shaderTexture.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 1.0)));
+		box3.render(glm::scale(cubeTextureModelF212, glm::vec3(2.0, 2.0, 1.0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*															Tapa de la casa (Arriba)														*/
+
+		glm::mat4 modelPiedra4 = glm::mat4(1.0);
+		modelPiedra4 = glm::translate(modelPiedra4, glm::vec3(5.5, 5.0, 5.5));
+		glBindTexture(GL_TEXTURE_2D, textureID5);
+		shaderTexture.setFloat("offsetX", offX);
+		box2.render(glm::scale(modelPiedra4, glm::vec3(11.0, 0.01, 11.0)));
+		shaderTexture.setFloat("offsetX", 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/*															Tapa de la casa (Planta Baja)														*/
+		glm::mat4 modelPiedra2 = glm::mat4(1.0);
+		modelPiedra2 = glm::translate(modelPiedra2, glm::vec3(5.5, 1.0, 5.5));
+		glBindTexture(GL_TEXTURE_2D, textureID5);
+		shaderTexture.setFloat("offsetX", offX);
+		box2.render(glm::scale(modelPiedra2, glm::vec3(11.0, 0.01, 11.0)));
+		shaderTexture.setFloat("offsetX", 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/*															Tapa de la casa (Piso 1)														*/
+		glm::mat4 modelPiedra3 = glm::mat4(1.0);
+		modelPiedra3 = glm::translate(modelPiedra3, glm::vec3(5.5, 3.0, 5.5));
+		glBindTexture(GL_TEXTURE_2D, textureID5);
+		shaderTexture.setFloat("offsetX", offX);
+		box2.render(glm::scale(modelPiedra3, glm::vec3(11.0, 0.01, 11.0)));
+		shaderTexture.setFloat("offsetX", 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		/*															Tapa de la casa (Cesped)														*/
+		glm::mat4 modelPasto2 = glm::mat4(1.0);
+		modelPasto2 = glm::translate(modelPasto2, glm::vec3(5.5, 0.8, 5.5));
+		glBindTexture(GL_TEXTURE_2D, textureID6);
+		shaderTexture.setFloat("offsetX", offX);
+		box2.render(glm::scale(modelPasto2, glm::vec3(22.0, 0.01, 22.0)));
+		shaderTexture.setFloat("offsetX", 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		// Render del cyindro con materiales
 		// Descomentar
 		 glm::mat4 cylinderMaterialModel = glm::mat4(1.0);
@@ -761,929 +1972,6 @@ void applicationLoop() {
 }
 
 int main(int argc, char **argv) {
-	init(800, 700, "Window GLFW", false);
-	applicationLoop();
-	destroy();
-	return 1;
-}*/
-
-//glew include
-#include <GL/glew.h>
-
-//std includes
-#include <string>
-#include <iostream>
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-//glfw include
-#include <GLFW/glfw3.h>
-
-//GLM include
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-// program include
-#include "Headers/TimeManager.h"
-#include "Headers/Shader.h"
-// Geometry primitives
-#include "Headers/sphere.h"
-#include "Headers/Cylinder.h"
-#include "Headers/Box.h"
-#include "Headers/FirstPersonCamera.h"
-//Texture includes
-#include "Headers/Texture.h"
-
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
-
-std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
-
-Sphere sphere(20, 20);
-Sphere sphere2(20, 20);
-
-Cylinder cylinder(20, 20, 0.5, 0.5);
-Cylinder cylinder2(20, 20, 0.5, 0.5);
-
-bool render1 = true, render2 = false, render3 = false;
-Box box;
-
-Shader shader;
-Shader shaderColor;
-Shader shaderTexture;
-Shader shaderCubeTexture;
-Shader shaderMateriales;
-Shader shaderDirectionLight;
-Shader shaderPointLight;
-Shader shaderSpotLight;
-Shader shader_cambio = shaderSpotLight;
-
-GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6,
-textureID7, textureID8, textureID9, textureID10, textureID11, textureID12, textureID13, textureID14, textureID15, textureID16,
-textureID17, textureID18, textureID19, textureID20, textureID21, textureID22, textureID23, textureCubeTexture;
-GLuint cubeTextureID;
-
-GLenum types[6] = {
-	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-};
-
-std::string fileNames[6] = {
-	"../../Textures/mp_rainforest/rainforest_ft.tga",
-	"../../Textures/mp_rainforest/rainforest_bk.tga",
-	"../../Textures/mp_rainforest/rainforest_up.tga",
-	"../../Textures/mp_rainforest/rainforest_dn.tga",
-	"../../Textures/mp_rainforest/rainforest_rt.tga",
-	"../../Textures/mp_rainforest/rainforest_lf.tga"
-};
-
-int screenWidth;
-int screenHeight;
-
-GLFWwindow * window;
-
-bool exitApp = false;
-int lastMousePosX, offsetX;
-int lastMousePosY, offsetY;
-
-double deltaTime;
-
-// Se definen todos las funciones.
-void reshapeCallback(GLFWwindow* Window, int widthRes, int heightRes);
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod);
-void init(int width, int height, std::string strTitle, bool bFullScreen);
-void destroyWindow();
-void destroy();
-bool processInput(bool continueApplication = true);
-void animate(void);
-
-
-
-
-// Implementacion de todas las funciones.
-void init(int width, int height, std::string strTitle, bool bFullScreen) {
-
-	if (!glfwInit()) {
-		std::cerr << "Failed to initialize GLFW" << std::endl;
-		exit(-1);
-	}
-
-	screenWidth = width;
-	screenHeight = height;
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	if (bFullScreen)
-		window = glfwCreateWindow(width, height, strTitle.c_str(),
-			glfwGetPrimaryMonitor(), nullptr);
-	else
-		window = glfwCreateWindow(width, height, strTitle.c_str(), nullptr,
-			nullptr);
-
-	if (window == nullptr) {
-		std::cerr
-			<< "Error to create GLFW window, you can try download the last version of your video card that support OpenGL 3.3+"
-			<< std::endl;
-		destroyWindow();
-		exit(-1);
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(0);
-
-	glfwSetWindowSizeCallback(window, reshapeCallback);
-	glfwSetKeyCallback(window, keyCallback);
-	glfwSetCursorPosCallback(window, mouseCallback);
-	glfwSetMouseButtonCallback(window, mouseButtonCallback);
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
-	// Init glew
-	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
-	if (GLEW_OK != err) {
-		std::cerr << "Failed to initialize glew" << std::endl;
-		exit(-1);
-	}
-
-	glViewport(0, 0, screenWidth, screenHeight);
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-
-	glEnable(GL_DEPTH_TEST);
-
-	shaderColor.initialize("../../Shaders/transformaciones.vs", "../../Shaders/transformaciones.fs");
-	shaderTexture.initialize("../../Shaders/texturizado_res.vs", "../../Shaders/texturizado_res.fs");
-	shaderCubeTexture.initialize("../../Shaders/cubeTexture.vs", "../../Shaders/cubeTexture.fs");
-	shaderMateriales.initialize("../../Shaders/iluminacion_materiales_res.vs", "../../Shaders/iluminacion_materiales_res.fs");
-	shaderDirectionLight.initialize("../../Shaders/typeLight.vs", "../../Shaders/directionalLight.fs");
-	shaderPointLight.initialize("../../Shaders/typeLight.vs", "../../Shaders/pointLight.fs");
-	shaderSpotLight.initialize("../../Shaders/typeLight.vs", "../../Shaders/spotLight.fs");
-	sphere2.init();
-
-	sphere.init();
-	cylinder.init();
-
-
-	box.init();
-	box.setShader(&shaderTexture);
-	box.setColor(glm::vec3(0.2, 0.8, 0.4));
-
-	camera->setPosition(glm::vec3(0.0f, 0.0f, -0.0f));
-	//Creacion de la casita
-	// base mesa
-	int imageWidth, imageHeight;
-	Texture texture("../../Textures/madera.jpg");
-	FIBITMAP* bitmap = texture.loadImage(false);
-	unsigned char * data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID1);
-	glBindTexture(GL_TEXTURE_2D, textureID1);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-	//mesa tapiz
-	texture = Texture("../../Textures/madera.png");
-	bitmap = texture.loadImage(true);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID9);
-	glBindTexture(GL_TEXTURE_2D, textureID9);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-	//base sillon
-	texture = Texture("../../Textures/metal.jpg");
-	bitmap = texture.loadImage(true);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID10);
-	glBindTexture(GL_TEXTURE_2D, textureID10);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-	// Texture piso casa
-	texture = Texture("../../Textures/piso.jpg");
-	bitmap = texture.loadImage(true);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID2);
-	glBindTexture(GL_TEXTURE_2D, textureID2);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-
-	// Texture pared interna
-	texture = Texture("../../Textures/azul.jpg");
-	bitmap = texture.loadImage(true);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID4);
-	glBindTexture(GL_TEXTURE_2D, textureID4);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-	//cuarto interno
-
-	// Texture pared interior
-	texture = Texture("../../Textures/white.jpg");
-	bitmap = texture.loadImage(true);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID5);
-	glBindTexture(GL_TEXTURE_2D, textureID5);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-	// Texture puerta
-	texture = Texture("../../Textures/puerta.png");
-	bitmap = texture.loadImage(false);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID6);
-	glBindTexture(GL_TEXTURE_2D, textureID6);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-	// Texture pared externa
-	texture = Texture("../../Textures/test.jpg");
-	bitmap = texture.loadImage(true);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID22);
-	glBindTexture(GL_TEXTURE_2D, textureID22);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-	// Texture porton
-	texture = Texture("../../Textures/porton.jpg");
-	bitmap = texture.loadImage(false);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID23);
-	glBindTexture(GL_TEXTURE_2D, textureID23);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-	/******************/
-
-
-
-	// Textura cuadritos
-	texture = Texture("../../Textures/test.png");
-	bitmap = texture.loadImage(false);
-	data = texture.convertToData(bitmap, imageWidth, imageHeight);
-	glGenTextures(1, &textureID3);
-	glBindTexture(GL_TEXTURE_2D, textureID3);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		std::cout << "Failed to load texture" << std::endl;
-	texture.freeImage(bitmap);
-
-
-	glGenTextures(1, &cubeTextureID);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextureID);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(types); i++) {
-		texture = Texture(fileNames[i]);
-		FIBITMAP* bitmap = texture.loadImage(true);
-		data = texture.convertToData(bitmap, imageWidth, imageHeight);
-		if (data) {
-			glTexImage2D(types[i], 0, GL_RGBA, imageWidth, imageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-		}
-		else
-			std::cout << "Failed to load texture" << std::endl;
-		texture.freeImage(bitmap);
-	}
-
-}
-
-void destroyWindow() {
-	glfwDestroyWindow(window);
-	glfwTerminate();
-}
-
-void destroy() {
-	destroyWindow();
-
-	shaderColor.destroy();
-	shaderTexture.destroy();
-	shaderCubeTexture.destroy();
-	shaderMateriales.destroy();
-	shaderDirectionLight.destroy();
-	shaderPointLight.destroy();
-	shaderSpotLight.destroy();
-	sphere.destroy();
-	cylinder.destroy();
-	box.destroy();
-}
-
-void reshapeCallback(GLFWwindow* Window, int widthRes, int heightRes) {
-	screenWidth = widthRes;
-	screenHeight = heightRes;
-	glViewport(0, 0, widthRes, heightRes);
-}
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-	if (action == GLFW_PRESS) {
-		switch (key) {
-		case GLFW_KEY_ESCAPE:
-			exitApp = true;
-			break;
-		case GLFW_KEY_1:
-			render1 = true;
-			render2 = false;
-			render3 = false;
-			break;
-		case GLFW_KEY_2:
-			render1 = false;
-			render2 = true;
-			render3 = false;
-			break;
-		case GLFW_KEY_3:
-			render1 = false;
-			render2 = false;
-			render3 = true;
-			break;
-		}
-	}
-}
-
-void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
-	offsetX = xpos - lastMousePosX;
-	offsetY = ypos - lastMousePosY;
-	lastMousePosX = xpos;
-	lastMousePosY = ypos;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		camera->mouseMoveCamera(offsetX, offsetY, deltaTime);
-}
-
-void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod) {
-	if (state == GLFW_PRESS) {
-		switch (button) {
-		case GLFW_MOUSE_BUTTON_RIGHT:
-			std::cout << "lastMousePos.y:" << lastMousePosY << std::endl;
-			break;
-		case GLFW_MOUSE_BUTTON_LEFT:
-			std::cout << "lastMousePos.x:" << lastMousePosX << std::endl;
-			break;
-		case GLFW_MOUSE_BUTTON_MIDDLE:
-			std::cout << "lastMousePos.x:" << lastMousePosX << std::endl;
-			std::cout << "lastMousePos.y:" << lastMousePosY << std::endl;
-			break;
-		}
-	}
-}
-
-bool processInput(bool continueApplication) {
-	if (exitApp || glfwWindowShouldClose(window) != 0) {
-		return false;
-	}
-	TimeManager::Instance().CalculateFrameRate(false);
-	deltaTime = TimeManager::Instance().DeltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera->moveFrontCamera(true, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera->moveFrontCamera(false, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera->moveRightCamera(false, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera->moveRightCamera(true, deltaTime);
-	glfwPollEvents();
-	return continueApplication;
-}
-
-void applicationLoop() {
-	bool psi = true;
-	double lastTime = TimeManager::Instance().GetTime();
-
-	glm::vec3 objPosition = glm::vec3(0.0f, 0.0f, -3.0f);
-	float angle = 0.0;
-	float ratio = 5.0;
-
-
-	while (psi) {
-		psi = processInput(true);
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-		// Matrix de proyeccion en perspectiva
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)screenWidth / screenWidth, 0.01f, 100.0f);
-		// matrix de vista
-		glm::mat4 view = camera->getViewMatrix();
-
-		glm::mat4 cubeModelMatrix = glm::translate(glm::mat4(1.0f), objPosition);
-		//piso
-		glm::mat4 matrix0 = glm::mat4(1.0f);//matriz con diagonal unitaria
-
-		matrix0 = glm::translate(matrix0, glm::vec3(0.0f, 0.0f, 0.0f));
-		glm::mat4 matrix1 = glm::translate(matrix0, glm::vec3(0.0f, 21.4f, 0.0f));
-		glm::mat4 matrix2_1 = glm::translate(matrix0, glm::vec3(-4.995f, 21.4f, 0.0f));
-		glm::mat4 sol = glm::translate(matrix0, glm::vec3(0.0f, 8.0f, -30.0f));
-		glm::mat4 matrix2_2 = glm::translate(matrix0, glm::vec3(4.995f, 21.4f, 0.0f));
-		glm::mat4 matrix2_3 = glm::translate(matrix0, glm::vec3(0.0f, 21.4f, -34.995f));
-		glm::mat4 matrix3 = glm::translate(matrix0, glm::vec3(-3.0f, 21.4f, 0.0f));
-		glm::mat4 matrix4 = glm::translate(matrix0, glm::vec3(-3.0f, 21.4f, -25.0f));
-		glm::mat4 matrix5 = glm::translate(matrix0, glm::vec3(3.0f, 21.4f, 0.0f));
-		glm::mat4 matrix6 = glm::translate(matrix0, glm::vec3(3.0f, 21.4f, -25.0f));
-		glm::mat4 matrix7 = glm::translate(matrix0, glm::vec3(0.0f, 21.4f, 0.0f));
-		glm::mat4 matrix8 = glm::translate(matrix0, glm::vec3(0.0f, -0.3f, -30.0f));
-		glm::mat4 matrix9 = glm::translate(matrix8, glm::vec3(0.0f, 0.7f, 3.0f));
-		glm::mat4 matrix10 = glm::translate(matrix0, glm::vec3(-4.3f, 4.0f, -20.0f));
-		glm::mat4 matrix11 = glm::translate(matrix0, glm::vec3(-4.7f, 8.0f, -20.0f));
-		glm::mat4 matrix12 = glm::translate(matrix0, glm::vec3(-2.0f, 4.0f, -31.0f));
-		glm::mat4 matrix13 = glm::translate(matrix0, glm::vec3(-2.0f, 8.0f, -33.6f));
-		glm::mat4 matrix14 = glm::translate(matrix0, glm::vec3(4.0f, 4.0f, -24.5f));
-		glm::mat4 matrix15 = glm::translate(matrix0, glm::vec3(4.0f, 3.7f, -29.7f));
-		glm::mat4 matrix16 = glm::translate(matrix0, glm::vec3(4.0f, 3.7f, -29.0f));
-		glm::mat4 matrix17 = glm::translate(matrix0, glm::vec3(4.0f, 3.7f, -28.3f));
-		glm::mat4 matrix18 = glm::translate(matrix0, glm::vec3(4.9f, 7.0f, -26.0f));
-		glm::mat4 matrix19 = glm::translate(matrix0, glm::vec3(4.4f, 0.0f, -34.0f));
-		glm::mat4 matrix20 = glm::translate(matrix0, glm::vec3(-4.8f, 7.0f, -24.0f));
-		glm::mat4 matrix21 = glm::translate(matrix0, glm::vec3(-4.7f, 2.9f, -24.0f));
-		glm::mat4 matrix22 = glm::translate(matrix0, glm::vec3(3.0f, 16.0f, -34.7f));
-		glm::mat4 matrix23 = glm::translate(matrix0, glm::vec3(-10.0f, 0.0f, 55.0f));
-		glm::mat4 matrix24 = glm::translate(matrix0, glm::vec3(-10.0f, 53.0f, 55.0f));
-		glm::mat4 matrix25 = glm::translate(matrix0, glm::vec3(-5.0f, 53.0f, 55.05f));
-		glm::mat4 matrix26 = glm::translate(matrix0, glm::vec3(-5.05f, 53.0f, 37.6f));
-		glm::mat4 matrix27 = glm::translate(matrix0, glm::vec3(-10.0f, 53.0f, -35.05f));
-		//piso cuarto detallado
-		matrix0 = glm::scale(matrix0, glm::vec3(10.0f, 0.1f, 10.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID2);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		//box.render(matrix0);
-		//piso demás cuartos
-		matrix23 = glm::scale(matrix23, glm::vec3(30.0f, 0.1f, 30.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID2);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix23);
-		//fachada externa
-		matrix24 = glm::scale(matrix24, glm::vec3(30.005f, 10.0f, 30.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID22);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 24, matrix24);
-		//porton
-		matrix25 = glm::scale(matrix25, glm::vec3(10.0f, 10.0f, 30.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID23);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 6, matrix25);
-		//separaciones
-		matrix26 = glm::scale(matrix26, glm::vec3(0.05f, 10.0f, 25.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix26);
-
-		matrix27 = glm::scale(matrix27, glm::vec3(30.0f, 10.0f, 0.05f));
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix27);
-
-		//cuarto externo
-		matrix1 = glm::scale(matrix1, glm::vec3(10.005f, 4.0f, 10.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID4);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(6, 18, matrix1);
-
-		///cuarto interno
-		//por paredes
-		//izquierda
-		matrix2_1 = glm::scale(matrix2_1, glm::vec3(0.005f, 4.0f, 10.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID5);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix2_1);
-		//derecha
-		matrix2_2 = glm::scale(matrix2_2, glm::vec3(0.005f, 4.0f, 10.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID5);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix2_2);
-
-		//trasera
-		matrix2_3 = glm::scale(matrix2_3, glm::vec3(10.005f, 4.0f, 0.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID5);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix2_3);
-
-		//pared izquierda frontal exterior
-		matrix3 = glm::scale(matrix3, glm::vec3(4.0f, 4.0f, 9.995f));
-		glBindTexture(GL_TEXTURE_2D, textureID4);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 6, matrix3);
-
-		//pared izquierda frontal interior
-		matrix4 = glm::scale(matrix4, glm::vec3(4.0f, 4.0f, 0.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID5);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix4);
-
-		//pared derecha frontal exterior
-		matrix5 = glm::scale(matrix5, glm::vec3(4.0f, 4.0f, 9.995f));
-		glBindTexture(GL_TEXTURE_2D, textureID4);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 6, matrix5);
-		//pared derecha frontal interior
-		matrix6 = glm::scale(matrix6, glm::vec3(4.0f, 4.0f, 0.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID5);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix6);
-
-		//puerta frontal
-		matrix7 = glm::scale(matrix7, glm::vec3(2.0f, 4.0f, 10.005f));
-		glBindTexture(GL_TEXTURE_2D, textureID6);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 6, matrix7);
-		//base de mesa
-		matrix8 = glm::scale(matrix8, glm::vec3(0.3f, 0.3f, 0.3f));
-		glBindTexture(GL_TEXTURE_2D, textureID1);
-		cylinder.setProjectionMatrix(projection);
-		cylinder.setViewMatrix(view);
-		cylinder.setShader(&shaderTexture);
-		cylinder.render(matrix8);
-		//mesa 
-		matrix9 = glm::scale(matrix9, glm::vec3(1.0f, 0.1f, 1.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID9);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix9);
-
-		//Sillon asiento
-		matrix10 = glm::scale(matrix10, glm::vec3(1.0f, 0.8f, 3.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID10);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix10);
-		//Sillon recargadera
-		matrix11 = glm::scale(matrix11, glm::vec3(0.25f, 1.5f, 3.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID10);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix11);
-		//Sillon asiento
-		matrix12 = glm::scale(matrix12, glm::vec3(3.0f, 0.8f, 1.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID10);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix12);
-
-		//Sillon recargadera
-		matrix13 = glm::scale(matrix13, glm::vec3(3.0f, 1.5f, 0.25f));
-		glBindTexture(GL_TEXTURE_2D, textureID10);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix13);
-		//base mueble 
-		matrix14 = glm::scale(matrix14, glm::vec3(1.0f, 0.8f, 2.0f));
-		glBindTexture(GL_TEXTURE_2D, textureID11);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(matrix14);
-		//estereo izquierdo del mueble 
-		matrix15 = glm::scale(matrix15, glm::vec3(0.333f, 0.6f, 0.5f));
-		glBindTexture(GL_TEXTURE_2D, textureID13);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 18, matrix15);
-		glBindTexture(GL_TEXTURE_2D, textureID12);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(18, 6, matrix15);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(24, 6, matrix15);
-
-		//estereo centro del mueble 
-		matrix16 = glm::scale(matrix16, glm::vec3(0.333f, 0.6f, 0.5f));
-		glBindTexture(GL_TEXTURE_2D, textureID13);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 18, matrix16);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(24, 6, matrix16);
-		glBindTexture(GL_TEXTURE_2D, textureID15);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(18, 6, matrix16);
-
-		//estereo derecho del mueble 
-		matrix17 = glm::scale(matrix17, glm::vec3(0.333f, 0.6f, 0.5f));
-		glBindTexture(GL_TEXTURE_2D, textureID13);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 18, matrix17);
-		glBindTexture(GL_TEXTURE_2D, textureID12);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(18, 6, matrix17);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(24, 6, matrix17);
-
-		//television
-		matrix18 = glm::scale(matrix18, glm::vec3(0.1f, 1.0f, 1.5f));
-		glBindTexture(GL_TEXTURE_2D, textureID16);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(18, 6, matrix18);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 18, matrix18);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(24, 12, matrix18);
-		//planta
-		matrix19 = glm::scale(matrix19, glm::vec3(0.3f, 1.0f, 0.3f));
-		glBindTexture(GL_TEXTURE_2D, textureID17);
-		cylinder.setProjectionMatrix(projection);
-		cylinder.setViewMatrix(view);
-		cylinder.setShader(&shaderTexture);
-		cylinder.render(0, cylinder.getSlices() * cylinder.getStacks() * 2 * 3, matrix19);
-		glBindTexture(GL_TEXTURE_2D, textureID18);
-		cylinder.render(cylinder.getSlices() * cylinder.getStacks() * 2 * 3, cylinder.getSlices() * 3, matrix19);
-
-		//cuadro
-		matrix20 = glm::scale(matrix20, glm::vec3(0.1f, 1.0f, 1.5f));
-		glBindTexture(GL_TEXTURE_2D, textureID19);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(6, 6, matrix20);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 6, matrix20);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(12, 24, matrix20);
-
-		//bote de basura
-		matrix21 = glm::scale(matrix21, glm::vec3(0.333f, 0.6f, 0.5f));
-		glBindTexture(GL_TEXTURE_2D, textureID20);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 24, matrix21);
-		glBindTexture(GL_TEXTURE_2D, textureID14);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(30, 6, matrix21);
-
-		//puerta copcina
-		matrix22 = glm::scale(matrix22, glm::vec3(1.5f, 3.0f, 0.1f));
-		glBindTexture(GL_TEXTURE_2D, textureID21);
-		box.setProjectionMatrix(projection);//proyeccion
-		box.setViewMatrix(view);//vista
-		box.render(0, 6, matrix22);
-
-		//menu de cambios de luz
-		if (render1) {
-			// Iluminación
-
-			shaderDirectionLight.turnOn();
-			//glUniform3fv(shaderSpotLight.getUniformLocation("light.position"), 1, glm::value_ptr(glm::vec3(0.0, 0.0, -15.0)));
-			glUniform3fv(shaderDirectionLight.getUniformLocation("light.direction"), 1, glm::value_ptr(glm::vec3(-1.0f, -30.0f, -1.0f)));
-			//glUniform3fv(shaderSpotLight.getUniformLocation("light.position"), 1, glm::value_ptr(camera->getPosition()));
-			//glUniform3fv(shaderSpotLight.getUniformLocation("light.direction"), 1, glm::value_ptr(camera->getFront()));
-			//glUniform3fv(shaderDirectionLight.getUniformLocation("viewPos"), 1, glm::value_ptr(camera->getPosition()));
-			glUniform3f(shaderDirectionLight.getUniformLocation("light.ambient"), 0.4, 0.4, 0.4);
-			glUniform3f(shaderDirectionLight.getUniformLocation("light.diffuse"), 0.2, 0.3, 0.6);
-			glUniform3f(shaderDirectionLight.getUniformLocation("light.specular"), 0.5, 0.3, 0.2);
-			//glUniform3f(shaderDirectionLight.getUniformLocation("material.ambient"), 1.0, 0.2, 0.6);
-			//glUniform3f(shaderDirectionLight.getUniformLocation("material.diffuse"), 0.4, 0.5, 0.8);
-			//glUniform3f(shaderDirectionLight.getUniformLocation("material.specular"), 0.5, 0.3, 0.2);
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.cutOff"), glm::cos(glm::radians(11.0f)));
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.outerCutOff"), glm::cos(glm::radians(15.0f)));
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.constant"), 1.0f);
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.linear"), 0.7f);
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.quadratics"), 1.8f);
-			//glUniform1f(shaderSpotLight.getUniformLocation("material.shininess"), 48.0);
-			box.setShader(&shaderDirectionLight);
-			cylinder.setShader(&shaderDirectionLight);
-			box.setPosition(glm::vec3(0.0f, -5.0f, -3.0f));
-			angle += 0.5;
-			sol = glm::rotate(sol, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-			sol = glm::scale(sol, glm::vec3(1.0f, 1.0f, 1.0f));
-			sphere.setShader(&shaderColor);
-			sphere.setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-			sphere.setProjectionMatrix(projection);
-			sphere.setViewMatrix(view);
-			sphere.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
-			sphere.enableWireMode();
-			sphere.render(sol);
-			shaderDirectionLight.turnOff();
-
-
-		}
-		else if (render2)
-		{
-			// Iluminación
-
-			shaderPointLight.turnOn();
-			//glUniform3fv(shaderMateriales.getUniformLocation("light.position"), 1, glm::value_ptr(glm::vec3(lightModelmatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))));
-			//glUniform3fv(shaderMateriales.getUniformLocation("light.direction"), 1, glm::value_ptr(glm::vec3(-0.3f, -1.0f, -0.2f)));
-			glUniform3fv(shaderPointLight.getUniformLocation("light.position"), 1, glm::value_ptr(camera->getPosition()));
-			glUniform3fv(shaderPointLight.getUniformLocation("light.direction"), 1, glm::value_ptr(camera->getFront()));
-			glUniform3fv(shaderPointLight.getUniformLocation("viewPos"), 1, glm::value_ptr(camera->getPosition()));
-			glUniform3f(shaderPointLight.getUniformLocation("light.ambient"), 0.2, 0.2, 0.2);
-			glUniform3f(shaderPointLight.getUniformLocation("light.diffuse"), 0.2, 0.3, 0.6);
-			glUniform3f(shaderPointLight.getUniformLocation("light.specular"), 0.5, 0.3, 0.2);
-			glUniform3f(shaderPointLight.getUniformLocation("material.ambient"), 1.0, 0.2, 0.6);
-			glUniform3f(shaderPointLight.getUniformLocation("material.diffuse"), 0.4, 0.5, 0.8);
-			glUniform3f(shaderPointLight.getUniformLocation("material.specular"), 0.5, 0.3, 0.2);
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.cutOff"), glm::cos(glm::radians(11.0f)));
-			//glUniform1f(shaderSpotLight.getUniformLocation("light.outerCutOff"), glm::cos(glm::radians(15.0f)));
-			glUniform1f(shaderPointLight.getUniformLocation("light.constant"), 1.0f);
-			glUniform1f(shaderPointLight.getUniformLocation("light.linear"), 0.0014f);
-			glUniform1f(shaderPointLight.getUniformLocation("light.quadratics"), 0.000007f);
-			glUniform1f(shaderPointLight.getUniformLocation("material.shininess"), 48.0);
-			box.setShader(&shaderPointLight);
-			cylinder.setShader(&shaderPointLight);
-			box.setPosition(glm::vec3(0.0f, -5.0f, -3.0f));
-			shaderPointLight.turnOff();
-		}
-		else if (render3) {
-			// Iluminación
-
-			shaderSpotLight.turnOn();
-			/*glUniform3fv(shaderSpotLight.getUniformLocation("light.position"), 1, glm::value_ptr(glm::vec3(0.0, 0.0, -15.0)));
-			glUniform3fv(shaderSpotLight.getUniformLocation("light.direction"), 1, glm::value_ptr(glm::vec3(-0.3f, -1.0f, -0.2f)));*/
-			glUniform3fv(shaderSpotLight.getUniformLocation("light.position"), 1, glm::value_ptr(camera->getPosition()));
-			glUniform3fv(shaderSpotLight.getUniformLocation("light.direction"), 1, glm::value_ptr(camera->getFront()));
-			glUniform3fv(shaderSpotLight.getUniformLocation("viewPos"), 1, glm::value_ptr(camera->getPosition()));
-			glUniform3f(shaderSpotLight.getUniformLocation("light.ambient"), 0.2, 0.2, 0.2);
-			glUniform3f(shaderSpotLight.getUniformLocation("light.diffuse"), 0.2, 0.3, 0.6);
-			glUniform3f(shaderSpotLight.getUniformLocation("light.specular"), 0.5, 0.3, 0.2);
-			glUniform3f(shaderSpotLight.getUniformLocation("material.ambient"), 1.0, 0.2, 0.6);
-			glUniform3f(shaderSpotLight.getUniformLocation("material.diffuse"), 0.4, 0.5, 0.8);
-			glUniform3f(shaderSpotLight.getUniformLocation("material.specular"), 0.5, 0.3, 0.2);
-			glUniform1f(shaderSpotLight.getUniformLocation("light.cutOff"), glm::cos(glm::radians(11.0f)));
-			glUniform1f(shaderSpotLight.getUniformLocation("light.outerCutOff"), glm::cos(glm::radians(15.0f)));
-			glUniform1f(shaderSpotLight.getUniformLocation("light.constant"), 1.0f);
-			glUniform1f(shaderSpotLight.getUniformLocation("light.linear"), 0.7f);
-			glUniform1f(shaderSpotLight.getUniformLocation("light.quadratics"), 1.8f);
-			glUniform1f(shaderSpotLight.getUniformLocation("material.shininess"), 48.0);
-			box.setShader(&shaderSpotLight);
-			cylinder.setShader(&shaderSpotLight);
-			box.setPosition(glm::vec3(0.0f, -5.0f, -3.0f));
-			shaderSpotLight.turnOff();
-		}
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
-
-		// Se Dibuja el Skybox
-		GLint oldCullFaceMode;
-		GLint oldDepthFuncMode;
-		glGetIntegerv(GL_CULL_FACE_MODE, &oldCullFaceMode);
-		glGetIntegerv(GL_DEPTH_FUNC, &oldDepthFuncMode);
-		shaderCubeTexture.turnOn();
-		GLuint cubeTextureId = shaderCubeTexture.getUniformLocation("skybox");
-		glUniform1f(cubeTextureId, 0);
-		glCullFace(GL_FRONT);
-		glDepthFunc(GL_LEQUAL);
-		sphere.setShader(&shaderCubeTexture);
-		sphere.setProjectionMatrix(projection);
-		sphere.setViewMatrix(glm::mat4(glm::mat3(view)));
-		sphere.setScale(glm::vec3(20.0f, 20.0f, 20.0f));
-		sphere.render();
-		glCullFace(oldCullFaceMode);
-		glDepthFunc(oldDepthFuncMode);
-		shaderCubeTexture.turnOff();
-
-		glfwSwapBuffers(window);
-	}
-}
-
-int main(int argc, char ** argv) {
 	init(800, 700, "Window GLFW", false);
 	applicationLoop();
 	destroy();
