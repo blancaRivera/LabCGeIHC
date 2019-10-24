@@ -96,8 +96,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\external\glm;..\..\external\glew\include;..\..\external\glfw\include;..\..\external\FreeImage\include;..\..\external\assimp\include;../../external/OpenAL/include;../../external/freealut/include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\external\glew\lib\;..\..\external\glfw\lib;..\..\external\FreeImage\lib;..\..\external\assimp\lib;../../external/OpenAL/lib;../../external/freealut/lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\external\glm;..\external\glew\include;..\external\glfw\include;..\external\FreeImage\include;..\external\assimp\include;../external/OpenAL/include;../external/freealut/include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\external\glew\lib\;..\external\glfw\lib;..\external\FreeImage\lib;..\external\assimp\lib;../external/OpenAL/lib;../external/freealut/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
