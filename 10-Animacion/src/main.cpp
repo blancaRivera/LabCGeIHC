@@ -567,6 +567,12 @@ void applicationLoop() {
 	float offX = 0.0;
 	float angle = 0.0;
 	float ratio = 30.0;
+	glm::mat4 matrixModelAircraft = glm::mat4(1.0);
+	matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(8.0, 2.0, -10.0));
+	int state = 0;
+	float offsetAircraftAdvance = 0.0;
+	float offsetAircraftRot = 0.0;
+
 	while (psi) {
 		psi = processInput(true);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -657,31 +663,55 @@ void applicationLoop() {
 		shaderMulLighting.setFloat("spotLights[0].quadratic", 0.001);
 
 		// Esto es para la luces pointlights
-		shaderMulLighting.setInt("pointLightCount", 3);
+		//numeros de luces a utilizar pointlight= 3 y tambien se modifica el shader de multipleluces en la parte del maximo de luces
+		shaderMulLighting.setInt("pointLightCount", 4);
+		//posicion de la luz con indice 0
 		shaderMulLighting.setVectorFloat3("pointLights[0].position", glm::value_ptr((glm::vec3(-5.1, 4.5, -3.5))));
+		//propiedades de la luz verde
 		shaderMulLighting.setVectorFloat3("pointLights[0].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
-		shaderMulLighting.setVectorFloat3("pointLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[0].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0))); //color verde
 		shaderMulLighting.setVectorFloat3("pointLights[0].light.specular", glm::value_ptr(glm::vec3(0.0, 0.6, 0.0)));
 		shaderMulLighting.setFloat("pointLights[0].constant", 1.0);
 		shaderMulLighting.setFloat("pointLights[0].linear", 0.04);
 		shaderMulLighting.setFloat("pointLights[0].quadratic", 0.004);
 
+		//propiedades de la luz roja
 		shaderMulLighting.setVectorFloat3("pointLights[1].position", glm::value_ptr((glm::vec3(-5.1, 4.8, -5.0))));
 		shaderMulLighting.setVectorFloat3("pointLights[1].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
-		shaderMulLighting.setVectorFloat3("pointLights[1].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[1].light.diffuse", glm::value_ptr(glm::vec3(0.01, 0.0, 0.0)));
 		shaderMulLighting.setVectorFloat3("pointLights[1].light.specular", glm::value_ptr(glm::vec3(0.6, 0.0, 0.0)));
 		shaderMulLighting.setFloat("pointLights[1].constant", 1.0);
 		shaderMulLighting.setFloat("pointLights[1].linear", 0.04);
 		shaderMulLighting.setFloat("pointLights[1].quadratic", 0.004);
 
+		//propiedades para la luz azul
 		shaderMulLighting.setVectorFloat3("pointLights[2].position", glm::value_ptr((glm::vec3(-5.1, 4.5, -6.5))));
 		shaderMulLighting.setVectorFloat3("pointLights[2].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
-		shaderMulLighting.setVectorFloat3("pointLights[2].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[2].light.diffuse", glm::value_ptr(glm::vec3(0.0, 0.0, 0.01)));
 		shaderMulLighting.setVectorFloat3("pointLights[2].light.specular", glm::value_ptr(glm::vec3(0.0, 0.0, 0.6)));
 		shaderMulLighting.setFloat("pointLights[2].constant", 1.0);
 		shaderMulLighting.setFloat("pointLights[2].linear", 0.04);
 		shaderMulLighting.setFloat("pointLights[2].quadratic", 0.004);
 
+		//propiedades de la luz amarilla
+		shaderMulLighting.setVectorFloat3("pointLights[3].position", glm::value_ptr((glm::vec3(-14.9, 4.8, -5.0))));
+		shaderMulLighting.setVectorFloat3("pointLights[3].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
+		shaderMulLighting.setVectorFloat3("pointLights[3].light.diffuse", glm::value_ptr(glm::vec3(0.01, 0.01, 0.0)));
+		shaderMulLighting.setVectorFloat3("pointLights[3].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.0)));
+		shaderMulLighting.setFloat("pointLights[3].constant", 1.0);
+		shaderMulLighting.setFloat("pointLights[3].linear", 0.04);
+		shaderMulLighting.setFloat("pointLights[3].quadratic", 0.004);
+
+		//propiedades de la luz morada
+		shaderMulLighting.setVectorFloat3("pointLights[4].position", glm::value_ptr((glm::vec3(-12.9, 4.8, -5.0))));
+		shaderMulLighting.setVectorFloat3("pointLights[4].light.ambient", glm::value_ptr(glm::vec3(0.001, 0.001, 0.001)));
+		shaderMulLighting.setVectorFloat3("pointLights[4].light.diffuse", glm::value_ptr(glm::vec3(0.01, 0.0, 0.01)));
+		shaderMulLighting.setVectorFloat3("pointLights[4].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.0)));
+		shaderMulLighting.setFloat("pointLights[4].constant", 1.0);
+		shaderMulLighting.setFloat("pointLights[4].linear", 0.04);
+		shaderMulLighting.setFloat("pointLights[4].quadratic", 0.004);
+
+		//colocar las esferas de las luces
 		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
 		sphereLamp.setPosition(glm::vec3(-5.1, 4.5, -3.5));
 		sphereLamp.setColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
@@ -695,6 +725,16 @@ void applicationLoop() {
 		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
 		sphereLamp.setPosition(glm::vec3(-5.1, 4.5, -6.5));
 		sphereLamp.setColor(glm::vec4(0.0, 0.0, 1.0, 1.0));
+		sphereLamp.render();
+
+		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
+		sphereLamp.setPosition(glm::vec3(-14.9, 4.8, -5.0));
+		sphereLamp.setColor(glm::vec4(0.8, 0.8, 0.0, 1.0));
+		sphereLamp.render();
+//mejorar esta luz
+		sphereLamp.setScale(glm::vec3(0.1, 0.1, 0.2));
+		sphereLamp.setPosition(glm::vec3(-12.9, 4.8, -5.0));
+		sphereLamp.setColor(glm::vec4(0.8, 0.0, 0.8, 1.0));
 		sphereLamp.render();
 
 		glm::mat4 lightModelmatrix = glm::rotate(glm::mat4(1.0f), angle,
@@ -859,12 +899,13 @@ void applicationLoop() {
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
-		glBindTexture(GL_TEXTURE_2D, textureID4);
-		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
-		boxWall.setPosition(glm::vec3(-10.0, 2.5, 0.0));
-		boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));
+		//se construye la casa 
+		glBindTexture(GL_TEXTURE_2D, textureID4);		
+		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));		//escalamiento
+		boxWall.setPosition(glm::vec3(-10.0, 2.5, 0.0));	//posicion
+		boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));	//eje de giro
 		boxWall.render();
-		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+	    boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
 		boxWall.setPosition(glm::vec3(-15.0, 2.5, -5.0));
 		boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
 		boxWall.render();
@@ -882,8 +923,7 @@ void applicationLoop() {
 		boxWall.render();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		glm::mat4 matrixModelAircraft = glm::mat4(1.0);
-		matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(8.0, 2.0, -10.0));
+		
 		modelAircraft.render(matrixModelAircraft);
 		glActiveTexture(GL_TEXTURE0);
 
@@ -908,6 +948,30 @@ void applicationLoop() {
 		dz = 0;
 		rot0 = 0;
 		offX += 0.001;
+		//checar estas funciones
+		switch (state) {
+		case 0:
+			std::cout << "Advance:" << std::endl;
+			//0.001 debe de ser igual
+			matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(0.0, 0.0, 0.01));
+			offsetAircraftAdvance += 0.01;
+			if(offsetAircraftAdvance > 5.0) {
+				offsetAircraftAdvance = 0.0;
+				state = 1;
+			}
+			break;
+		case 1:
+			std::cout << "	Turn:" << std::endl;
+			//0.001 debe de ser igual
+			matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(0.0, 0.0, 0.05));
+			matrixModelAircraft = glm::rotate(matrixModelAircraft, glm::radians (0.05f), glm::vec3(0.0, 1.0, 0.0));
+			offsetAircraftRot += 0.05f;
+			if (offsetAircraftRot > 90.0){
+				offsetAircraftRot = 0.0;
+				state = 0;
+			}
+			break;
+		}
 
 		glfwSwapBuffers(window);
 	}
