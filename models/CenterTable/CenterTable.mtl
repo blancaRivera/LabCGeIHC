@@ -10,6 +10,8 @@ newmtl wire_036036036
 	Ka 0.1412 0.1412 0.1412
 	Kd 0.1412 0.1412 0.1412
 	Ks 0.3500 0.3500 0.3500
+	map_Kd mi_cov_ph.jpg
+	map_Ks mi_cov_ph.jpg
 
 newmtl wire_135006006
 	Ns 32

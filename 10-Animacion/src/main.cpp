@@ -251,7 +251,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelRock.loadModel("../models/rock/rock.obj");
 	modelRock.setShader(&shaderMulLighting);
 
-	modelTable.loadModel("../models/Center Table/Center Table.obj");
+	modelTable.loadModel("../models/CenterTable/CenterTable.obj");
 	modelTable.setShader(&shaderMulLighting);
 
 	modelRailRoad.loadModel("../models/railroad/railroad_track.obj");
