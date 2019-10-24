@@ -78,7 +78,7 @@ Model modelRock;
 Model modelRailRoad;
 Model modelAircraft;
 Model modelTable;
-Model modelCama;
+//Model modelCama;
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6, textureID7;
 GLuint skyboxTextureID;
@@ -260,8 +260,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelAircraft.loadModel("../models/Aircraft_obj/E 45 Aircraft_obj.obj");
 	modelAircraft.setShader(&shaderMulLighting);
 
-	modelCama.loadModel("../models/cama/Full_Size_Bed_with_White_Sheets_Black_V1.obj");
-	modelCama.setShader(&shaderMulLighting);
+	/*modelCama.loadModel("../models/cama/Full_Size_Bed_with_White_Sheets_Black_V1.obj");
+	modelCama.setShader(&shaderMulLighting);*/
 
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
@@ -1475,13 +1475,13 @@ void applicationLoop() {
 		modelTable.render(matrixModelTable);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
-
+/*
 		//Models cama
 		glm::mat4 matrixModelCama = glm::mat4(1.0);
 		matrixModelCama = glm::translate(matrixModelCama, glm::vec3(4.0, 3.0, 6.0));
 		modelCama.render(matrixModelCama);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);*/
 
 //		modelAircraft.render(matrixModelAircraft);
 //		glActiveTexture(GL_TEXTURE0);
