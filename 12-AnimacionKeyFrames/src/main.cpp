@@ -143,6 +143,7 @@ int maxNumPasosJoints = 20;
 int numPasosJoints = 0;
 
 double deltaTime;
+double currTime, lastTime;
 
 // Se definen todos las funciones.
 void reshapeCallback(GLFWwindow *Window, int widthRes, int heightRes);
@@ -754,20 +755,18 @@ void applicationLoop() {
 	fileName = "../animaciones/animation_rotation.txt";
 	keyFramesJoints = getKeyRotFrames(fileName);
 
-	double lastTime = TimeManager::Instance().GetTime();
-	double time = lastTime;
+	lastTime = TimeManager::Instance().GetTime();
 
 	while (psi) {
-
-		time = TimeManager::Instance().GetTime();
-		// if(time - lastTime < 0.033333333) // 30 FPS
-		if(time - lastTime < 0.01666666) // 60 FPS
+		currTime = TimeManager::Instance().GetTime();
+		if(currTime - lastTime < 0.016666667){
+			glfwPollEvents();
 			continue;
-		lastTime = time;
+		}
+		lastTime = currTime;
 		TimeManager::Instance().CalculateFrameRate(true);
 		deltaTime = TimeManager::Instance().DeltaTime;
 		psi = processInput(true);
-
 
 		// Variables donde se guardan las matrices de cada articulacion por 1 frame
 		std::vector<glm::mat4> matrixModel;
