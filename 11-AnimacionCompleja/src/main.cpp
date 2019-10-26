@@ -80,13 +80,6 @@ Model modelRock;
 Model modelRailRoad;
 Model modelAircraft;
 Model modelEclipseChasis;
-// Descomentar
-/*Model modelEclipseRearWheels;
-Model modelEclipseFrontalWheels;*/
-Model modelHeliChasis;
-Model modelHeliHeli;
-Model modelLambo;
-Model modelLamboLeftDor;
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5;
 GLuint skyboxTextureID;
@@ -268,21 +261,6 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Eclipse
 	modelEclipseChasis.loadModel("../models/Eclipse/2003eclipse.obj");
 	modelEclipseChasis.setShader(&shaderMulLighting);
-	// Descomentar
-	/*modelEclipseFrontalWheels.loadModel("../models/Eclipse/2003eclipse_frontal_wheels.obj");
-	modelEclipseFrontalWheels.setShader(&shaderMulLighting);
-	modelEclipseRearWheels.loadModel("../models/Eclipse/2003eclipse_rear_wheels.obj");
-	modelEclipseRearWheels.setShader(&shaderMulLighting);*/
-	// Helicopter
-	modelHeliChasis.loadModel("../models/Helicopter/Mi_24_chasis.obj");
-	modelHeliChasis.setShader(&shaderMulLighting);
-	modelHeliHeli.loadModel("../models/Helicopter/Mi_24_heli.obj");
-	modelHeliHeli.setShader(&shaderMulLighting);
-	// Lamborginhi
-	modelLambo.loadModel("../models/Lamborginhi_Aventador_OBJ/Lamborghini_Aventador_chasis.obj");
-	modelLambo.setShader(&shaderMulLighting);
-	modelLamboLeftDor.loadModel("../models/Lamborginhi_Aventador_OBJ/Lamborghini_Aventador_left_dor.obj");
-	modelLamboLeftDor.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 
@@ -612,16 +590,6 @@ void applicationLoop() {
 	int state = 0;
 	float advanceCount = 0.0;
 	float rotCount = 0.0;
-	// Descomentar
-	/*float rotWheelsX = 0.0;
-	float rotWheelsY = 0.0;*/
-
-	glm::mat4 modelMatrixHeli = glm::mat4(1.0f);
-	modelMatrixHeli = glm::translate(modelMatrixHeli, glm::vec3(-10, 10, -4.0));
-	float rotHelHelY = 0.0;
-
-	int stateDoor = 0;
-	float dorRotCount = 0.0;
 
 	while (psi) {
 		psi = processInput(true);
@@ -984,50 +952,6 @@ void applicationLoop() {
 		modelEclipseChasis.render(modelMatrixEclipseChasis);
 		glActiveTexture(GL_TEXTURE0);
 
-		// Descomentar
-		/*glm::mat4 modelMatrixFrontalWheels = glm::mat4(modelMatrixEclipseChasis);
-		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, 1.05813, 4.11483 ));
-		modelMatrixFrontalWheels = glm::rotate(modelMatrixFrontalWheels, rotWheelsY, glm::vec3(0, 1, 0));
-		modelMatrixFrontalWheels = glm::rotate(modelMatrixFrontalWheels, rotWheelsX, glm::vec3(1, 0, 0));
-		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, -1.05813, -4.11483));
-		modelEclipseFrontalWheels.render(modelMatrixFrontalWheels);
-		glActiveTexture(GL_TEXTURE0);
-
-		glm::mat4 modelMatrixRearWheels = glm::mat4(modelMatrixEclipseChasis);
-		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, 1.05813, -4.35157 ));
-		modelMatrixRearWheels = glm::rotate(modelMatrixRearWheels, rotWheelsX, glm::vec3(1, 0, 0));
-		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, -1.05813, 4.35157));
-		modelEclipseRearWheels.render(modelMatrixRearWheels);
-		glActiveTexture(GL_TEXTURE0);*/
-
-		// Helicopter
-		glm::mat4 modelMatrixHeliChasis = glm::mat4(modelMatrixHeli);
-		modelHeliChasis.render(modelMatrixHeliChasis);
-		glActiveTexture(GL_TEXTURE0);
-
-		glm::mat4 modelMatrixHeliHeli = glm::mat4(modelMatrixHeliChasis);
-		// Descomentar pivotes
-		/*modelMatrixHeliHeli = glm::translate(modelMatrixHeliHeli, glm::vec3(0.0, 0.0, -0.249548));
-		modelMatrixHeliHeli = glm::rotate(modelMatrixHeliHeli, rotHelHelY, glm::vec3(0, 1, 0));
-		modelMatrixHeliHeli = glm::translate(modelMatrixHeliHeli, glm::vec3(0.0, 0.0, 0.249548));*/
-		modelHeliHeli.render(modelMatrixHeliHeli);
-		glActiveTexture(GL_TEXTURE0);
-
-		// Lambo car
-		glm::mat4 modelMatrixLambo = glm::mat4(1.0);
-		modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0, 0.0, -10.0));
-		modelMatrixLambo = glm::scale(modelMatrixLambo, glm::vec3(2.0, 2.0, 2.0));
-		modelLambo.render(modelMatrixLambo);
-		glActiveTexture(GL_TEXTURE0);
-		glm::mat4 modelMatrixLamboLeftDor = glm::mat4(modelMatrixLambo);
-		// Descomentar pivotes
-		/*modelMatrixLamboLeftDor = glm::translate(modelMatrixLamboLeftDor, glm::vec3(1.08676, 0.707316, 0.982601));
-		modelMatrixLamboLeftDor = glm::rotate(modelMatrixLamboLeftDor, glm::radians(dorRotCount), glm::vec3(1.0, 0, 0));
-		modelMatrixLamboLeftDor = glm::translate(modelMatrixLamboLeftDor, glm::vec3(-1.08676, -0.707316, -0.982601));*/
-		modelMatrixLamboLeftDor = glm::rotate(modelMatrixLamboLeftDor, glm::radians(dorRotCount), glm::vec3(1.0, 0, 0));
-		modelLamboLeftDor.render(modelMatrixLamboLeftDor);
-		glActiveTexture(GL_TEXTURE0);
-
 		/*******************************************
 		 * Skybox
 		 *******************************************/
@@ -1052,8 +976,6 @@ void applicationLoop() {
 		dz = 0;
 		rot0 = 0;
 		offX += 0.1;
-		// Descomentar
-		// rotHelHelY += 0.5;
 
 		/*******************************************
 		 * State machines
@@ -1063,11 +985,6 @@ void applicationLoop() {
 		case 0:
 			modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0, 0.0, 0.1));
 			advanceCount += 0.1;
-			// Descomentar
-			/*rotWheelsX += 0.05;
-			rotWheelsY -= 0.02;
-			if(rotWheelsY < 0)
-				rotWheelsY = 0;*/
 			if(advanceCount > 10.0){
 				advanceCount = 0;
 				state = 1;
@@ -1077,20 +994,12 @@ void applicationLoop() {
 			modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0, 0.0, 0.025));
 			modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(0.5f), glm::vec3(0, 1, 0));
 			rotCount += 0.5f;
-			// Descomentar
-			/*rotWheelsX += 0.05;
-			rotWheelsY += 0.02;
-			if(rotWheelsY > 0.25)
-				rotWheelsY = 0.25;*/
 			if(rotCount >= 90.0){
 				rotCount = 0;
 				state = 0;
 			}
 			break;
 		}
-
-		// State machine for the lambo car
-
 		glfwSwapBuffers(window);
 	}
 }
