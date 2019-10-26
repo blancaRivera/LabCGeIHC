@@ -78,6 +78,9 @@ Model modelRock;
 Model modelRailRoad;
 Model modelAircraft;
 Model modelTable;
+Model modelBuro;
+Model modelCama;
+Model modelCasaInterior;
 
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6, textureID7;
@@ -260,8 +263,14 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelAircraft.loadModel("../models/Aircraft_obj/E 45 Aircraft_obj.obj");
 	modelAircraft.setShader(&shaderMulLighting);
 
+	modelBuro.loadModel("../models/nightstand_01/eb_nightstand_01.obj");
+	modelBuro.setShader(&shaderMulLighting);
 
+	modelCama.loadModel("../models/bed/Full_Size_Bed_with_White_Sheets_Black_V1.obj");
+	modelCama.setShader(&shaderMulLighting);
 
+	modelCasaInterior.loadModel("../models/House_interior/house interior.obj");
+	modelCasaInterior.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 
@@ -1470,11 +1479,51 @@ void applicationLoop() {
 
 		//Models mesa de centro
 		glm::mat4 matrixModelTable = glm::mat4(1.0);
-		matrixModelTable = glm::translate(matrixModelTable, glm::vec3(4.0, 1.0, 6.0));
+		matrixModelTable = glm::translate(matrixModelTable, glm::vec3(3.0, 1.0, 6.0));
 		modelTable.render(matrixModelTable);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
+
+		//Models Buro
+		glm::mat4 matrixModelBuro = glm::mat4(1.0);
+		matrixModelBuro = glm::translate(matrixModelBuro, glm::vec3(1.0, 1.0, 6.0));
+		matrixModelBuro = glm::scale(matrixModelBuro, glm::vec3(0.008, 0.008, 0.008));
+		modelBuro.render(matrixModelBuro);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Buro
+		glm::mat4 matrixModelBuro2 = glm::mat4(1.0);
+		matrixModelBuro2 = glm::translate(matrixModelBuro2, glm::vec3(1.0, 1.0, 8.0));
+		matrixModelBuro2 = glm::scale(matrixModelBuro2, glm::vec3(0.008, 0.008, 0.008));
+		modelBuro.render(matrixModelBuro2);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Buro
+		glm::mat4 matrixModelBuro3 = glm::mat4(1.0);
+		matrixModelBuro3 = glm::translate(matrixModelBuro3, glm::vec3(1.0, 1.0, 10.0));
+		matrixModelBuro3 = glm::scale(matrixModelBuro3, glm::vec3(0.008, 0.008, 0.008));
+		modelBuro.render(matrixModelBuro3);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Cama
+		glm::mat4 matrixModelCama = glm::mat4(1.0);
+		matrixModelCama = glm::translate(matrixModelCama, glm::vec3(5.0, 1.0, 10.0));
+		matrixModelCama = glm::scale(matrixModelCama, glm::vec3(0.008, 0.008, 0.008));
+		modelCama.render(matrixModelCama);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models house interior 
+		glm::mat4 matrixModelCasa = glm::mat4(1.0);
+		matrixModelCasa = glm::translate(matrixModelCasa, glm::vec3(10.0, 1.0, 10.0));
+		matrixModelCasa = glm::scale(matrixModelCasa, glm::vec3(0.008, 0.008, 0.008));
+		modelCasaInterior.render(matrixModelCasa);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
 
 //		modelAircraft.render(matrixModelAircraft);
 //		glActiveTexture(GL_TEXTURE0);
