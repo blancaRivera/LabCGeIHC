@@ -83,6 +83,10 @@ Model modelCama;
 Model modelCasaInterior;
 Model modelEscritorio;
 Model modelCarretera;
+Model modelEclipseChasis;
+Model modelHeliChasis;
+Model modelHeliElises;
+Model modelMueble;
 
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6, textureID7;
@@ -277,8 +281,21 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelEscritorio.loadModel("../models/Escritorio/mesa_pc.obj");
 	modelEscritorio.setShader(&shaderMulLighting);
 
+	modelMueble.loadModel("../models/Wood_Table/Wood_Table.obj");
+	modelMueble.setShader(&shaderMulLighting);
+
 	modelCarretera.loadModel("../models/RoadV2/Road/roadV2.obj");
 	modelCarretera.setShader(&shaderMulLighting);
+
+	// Eclipse
+	modelEclipseChasis.loadModel("../models/Eclipse/2003eclipse.obj");
+	modelEclipseChasis.setShader(&shaderMulLighting);
+
+	//Helicoptero
+	modelHeliChasis.loadModel("../models/helicopter/Mi_24_chasis.obj");
+	modelHeliChasis.setShader(&shaderMulLighting);
+	modelHeliElises.loadModel("../models/helicopter/Mi_24_heli.obj");
+	modelHeliElises.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 
@@ -700,7 +717,13 @@ void applicationLoop() {
 	int state = 0;
 	float offsetAircraftAdvance = 0.0;
 	float offsetAircraftRot = 0.0;
-	float rotCama = 90.0;
+	glm::mat4 modelMatrixEclipse = glm::mat4(1.0f);
+	modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(20, 0, 10.0));
+	float rotHeliElisesY = 0.0;
+	float advanceCount = 0.0;
+	float rotCount = 0.0;
+	float rolWheelsX = 0.0;
+	float rolWheelsY = 0.0;
 
 	while (psi) {
 		psi = processInput(true);
@@ -1537,7 +1560,7 @@ void applicationLoop() {
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
-		//Models escritorio 
+		//Models escritotio
 		glm::mat4 matrixModelEs = glm::mat4(1.0);
 		matrixModelEs = glm::translate(matrixModelEs, glm::vec3(9.0, 1.0, 5.0));
 		matrixModelEs = glm::scale(matrixModelEs, glm::vec3(0.008, 0.008, 0.008));
@@ -1545,14 +1568,41 @@ void applicationLoop() {
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
-		//Models Cerretera
+		//Models mueble 
+		glm::mat4 matrixModelWood_Table = glm::mat4(1.0);
+		matrixModelWood_Table = glm::translate(matrixModelWood_Table, glm::vec3(9.0, 1.0, 7.0));
+		//matrixModelWood_Table = glm::scale(matrixModelWood_Table, glm::vec3(0.008, 0.008, 0.008));
+		modelMueble.render(matrixModelWood_Table);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Carretera
 		glm::mat4 matrixModelCarretera = glm::mat4(1.0);
-		matrixModelCarretera = glm::translate(matrixModelCarretera, glm::vec3(22.0, 10.0, 10.0));
-		//matrixModelCarretera = glm::scale(matrixModelCarretera, glm::vec3(0.5, 0.5, 0.5));
+		matrixModelCarretera = glm::translate(matrixModelCarretera, glm::vec3(16.0, 0.0, 40.0));
+		matrixModelCarretera = glm::scale(matrixModelCarretera, glm::vec3(10, 2, 10.0));
 		modelCarretera.render(matrixModelCarretera);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
+
+		// Render for the eclipse car
+		glm::mat4 modelMatrixEclipseChasis = glm::mat4(modelMatrixEclipse);
+		modelMatrixEclipseChasis = glm::scale(modelMatrixEclipse, glm::vec3(0.5, 0.5, 0.5));
+		modelEclipseChasis.render(modelMatrixEclipseChasis);
+		glActiveTexture(GL_TEXTURE0);
+
+		//helicoptero
+		glm::mat4 modelMatrixHeliChasis = glm::mat4(1.0);
+		modelMatrixHeliChasis = glm::translate(modelMatrixHeliChasis, glm::vec3(17.0, 5.0, 5.0));
+		modelHeliChasis.render(modelMatrixHeliChasis);
+		glActiveTexture(GL_TEXTURE0);
+
+		glm::mat4 modelMatrixHeliElises = glm::mat4(modelMatrixHeliChasis);
+		modelMatrixHeliElises = glm::translate(modelMatrixHeliElises, glm::vec3(-0.003344, 1.88318, -0.254566));
+		modelMatrixHeliElises = glm::rotate(modelMatrixHeliElises, rotHeliElisesY, glm::vec3(0.0, 1.0, 0.0));
+		modelMatrixHeliElises = glm::translate(modelMatrixHeliElises, glm::vec3(0.003344, -1.88318, 0.254566));
+		modelHeliElises.render(modelMatrixHeliElises);
+		glActiveTexture(GL_TEXTURE0);
 
 //		modelAircraft.render(matrixModelAircraft);
 //		glActiveTexture(GL_TEXTURE0);
@@ -1578,32 +1628,40 @@ void applicationLoop() {
 		dz = 0;
 		rot0 = 0;
 		offX += 0.001;
+		rolWheelsX += 0.01;
+		rotHeliElisesY += 0.01;
 
-/*		//checar estas funciones
+		/*******************************************
+		 * State machines
+		 *******************************************/
+		 // State machine for eclipse car
 		switch (state) {
 		case 0:
-			std::cout << "Advance:" << std::endl;
-			//0.001 debe de ser igual
-			matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(0.0, 0.0, 0.01));
-			offsetAircraftAdvance += 0.01;
-			if(offsetAircraftAdvance > 5.0) {
-				offsetAircraftAdvance = 0.0;
+			modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0, 0.0, 0.1));
+			advanceCount += 0.1;
+			rolWheelsY -= 0.01;
+			if (rolWheelsY < 0)
+				rolWheelsY = 0;
+			if (advanceCount > 10.0) {
+				advanceCount = 0;
 				state = 1;
 			}
 			break;
 		case 1:
-			std::cout << "	Turn:" << std::endl;
-			//0.001 debe de ser igual
-			matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(0.0, 0.0, 0.05));
-			matrixModelAircraft = glm::rotate(matrixModelAircraft, glm::radians (0.05f), glm::vec3(0.0, 1.0, 0.0));
-			offsetAircraftRot += 0.05f;
-			if (offsetAircraftRot > 90.0){
-				offsetAircraftRot = 0.0;
+			modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0, 0.0, 0.025));
+			modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(0.5f), glm::vec3(0, 1, 0));
+			rotCount += 0.5f;
+			rolWheelsY += 0.01;
+			if (rolWheelsY > glm::radians(15.0))
+				rolWheelsY = glm::radians(15.0);
+			if (rotCount >= 90.0) {
+				rotCount = 0;
 				state = 0;
 			}
 			break;
 		}
-*/
+
+
 		glfwSwapBuffers(window);
 	}
 }
