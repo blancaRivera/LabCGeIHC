@@ -86,7 +86,7 @@ Model modelCarretera;
 Model modelEclipseChasis;
 Model modelHeliChasis;
 Model modelHeliElises;
-Model modelMueble;
+//Model modelMueble;
 
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6, textureID7;
@@ -1567,7 +1567,7 @@ void applicationLoop() {
 		modelEscritorio.render(matrixModelEs);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
-
+/*
 		//Models mueble 
 		glm::mat4 matrixModelWood_Table = glm::mat4(1.0);
 		matrixModelWood_Table = glm::translate(matrixModelWood_Table, glm::vec3(9.0, 1.0, 7.0));
@@ -1575,7 +1575,7 @@ void applicationLoop() {
 		modelMueble.render(matrixModelWood_Table);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
-
+*/
 		//Models Carretera
 		glm::mat4 matrixModelCarretera = glm::mat4(1.0);
 		matrixModelCarretera = glm::translate(matrixModelCarretera, glm::vec3(16.0, 0.0, 40.0));
