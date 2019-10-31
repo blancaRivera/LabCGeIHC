@@ -84,6 +84,7 @@ Model modelEclipseWheelsFrontal;
 Model modelEclipseWheelsRear;
 Model modelHeliChasis;
 Model modelHeliElises;
+Model modelHeliElisesTraseras;
 Model modelTable;
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5;
@@ -267,14 +268,17 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Eclipse
 	modelEclipseChasis.loadModel("../models/Eclipse/2003eclipse_chasis.obj");
 	modelEclipseChasis.setShader(&shaderMulLighting);
+
 	modelEclipseWheelsFrontal.loadModel("../models/Eclipse/2003eclipse_frontal_wheels.obj");
 	modelEclipseChasis.setShader(&shaderMulLighting);
+
 	modelEclipseWheelsRear.loadModel("../models/Eclipse/2003eclipse_rear_wheels.obj");
 	modelEclipseChasis.setShader(&shaderMulLighting);
 
 	//Helicoptero
 	modelHeliChasis.loadModel("../models/helicopter/Mi_24_chasis.obj");
 	modelHeliChasis.setShader(&shaderMulLighting);
+
 	modelHeliElises.loadModel("../models/helicopter/Mi_24_heli.obj");
 	modelHeliElises.setShader(&shaderMulLighting);
 
@@ -613,6 +617,7 @@ void applicationLoop() {
 	float rolWheelsX = 0.0;
 	float rolWheelsY = 0.0;
 	float rotHeliElisesY = 0.0;
+	float rotHeliElisesX = 0.0;
 
 	lastTime= TimeManager::Instance().GetTime();
 
@@ -984,24 +989,21 @@ void applicationLoop() {
 		modelEclipseChasis.render(modelMatrixEclipseChasis);
 		glActiveTexture(GL_TEXTURE0);
 
-		/*checar esto
-		// Render for the eclipse car llantas delanteras
-		glm::mat4 modelMatrixEclipseFrontalWheels = glm::mat4(modelMatrixEclipseChasis);
+	/*	glm::mat4 modelMatrixEclipseFrontalWheels = glm::mat4(modelMatrixEclipseChasis);
 		modelMatrixEclipseFrontalWheels = glm::translate(modelMatrixEclipseFrontalWheels, glm::vec3(0, 1.06285, 4.11795));
-		//modelMatrixEclipseFrontalWheels = glm::rotate(modelMatrixEclipseFrontalWheels, rotWheelsY(0, 1.06285, 4.11795));
-		modelMatrixEclipseFrontalWheels = glm::rotate(modelMatrixEclipseFrontalWheels, rolWheelsX, glm::vec3(1,0,0));
-		modelMatrixEclipseFrontalWheels = glm::translate(modelMatrixEclipseFrontalWheels, glm::vec3(0, -1.05128, -4.11795));
+		modelMatrixEclipseFrontalWheels = glm::rotate(modelMatrixEclipseFrontalWheels, rolWheelsY, glm::vec3(0, 1, 0));
+		modelMatrixEclipseFrontalWheels = glm::rotate(modelMatrixEclipseFrontalWheels, rolWheelsX, glm::vec3(1, 0, 0));
+		modelMatrixEclipseFrontalWheels = glm::translate(modelMatrixEclipseFrontalWheels, glm::vec3(0, -1.06285, -4.11795));
 		modelEclipseWheelsFrontal.render(modelMatrixEclipseFrontalWheels);
 		glActiveTexture(GL_TEXTURE0);
-	
-		// Render for the eclipse car llantas traseras
+
 		glm::mat4 modelMatrixEclipseRearWheels = glm::mat4(modelMatrixEclipseChasis);
-		modelMatrixEclipseRearWheels = glm::translate(modelMatrixEclipseRearWheels, glm::vec3(0, 1.06285, -4.11795));
+		modelMatrixEclipseRearWheels = glm::translate(modelMatrixEclipseRearWheels, glm::vec3(0, 1.05128, -4.34651));
 		modelMatrixEclipseRearWheels = glm::rotate(modelMatrixEclipseRearWheels, rolWheelsX, glm::vec3(1, 0, 0));
-		modelMatrixEclipseRearWheels = glm::translate(modelMatrixEclipseRearWheels, glm::vec3(0, -1.05128, 4.11795));
+		modelMatrixEclipseRearWheels = glm::translate(modelMatrixEclipseRearWheels, glm::vec3(0, -1.05128, 4.34651));
 		modelEclipseWheelsRear.render(modelMatrixEclipseRearWheels);
-		glActiveTexture(GL_TEXTURE0);
-*/
+		glActiveTexture(GL_TEXTURE0);*/
+	
 		//helicoptero
 		glm::mat4 modelMatrixHeliChasis = glm::mat4 (1.0);
 		modelMatrixHeliChasis = glm::translate(modelMatrixHeliChasis, glm::vec3(10.0, 5.0, 5.0));
@@ -1014,7 +1016,6 @@ void applicationLoop() {
 		modelMatrixHeliElises = glm::translate(modelMatrixHeliElises, glm::vec3(0.003344, -1.88318 , 0.254566));
 		modelHeliElises.render(modelMatrixHeliElises);
 		glActiveTexture(GL_TEXTURE0);
-		
 
 		/*******************************************
 		 * Skybox
@@ -1040,8 +1041,8 @@ void applicationLoop() {
 		dz = 0;
 		rot0 = 0;
 		offX += 0.1;
-		rolWheelsX += 0.01;
-		rotHeliElisesY += 0.01;
+		rolWheelsX += 0.1;
+		rotHeliElisesY += 0.1;
 
 		/*******************************************
 		 * State machines
@@ -1056,6 +1057,7 @@ void applicationLoop() {
 				rolWheelsY = 0;
 			if(advanceCount > 10.0){
 				advanceCount = 0;
+				rolWheelsY = 0;
 				state = 1;
 			}
 			break;
