@@ -23,6 +23,9 @@ newmtl wire_135006006
 	Kd 0.5294 0.0235 0.0235
 	Ks 0.3500 0.3500 0.3500
 
+	map_Kd book_pages.png
+	map_Ks book_pages.png
+
 newmtl wire_177027088
 	Ns 32
 	d 1
@@ -32,6 +35,8 @@ newmtl wire_177027088
 	Ka 0.6941 0.1059 0.3451
 	Kd 0.6941 0.1059 0.3451
 	Ks 0.3500 0.3500 0.3500
+	map_Kd afrormosia-1_d.jpg
+	map_Ks afrormosia-1_d.jpg
 
 newmtl wire_177088027
 	Ns 32
@@ -42,6 +47,9 @@ newmtl wire_177088027
 	Ka 0.6941 0.3451 0.1059
 	Kd 0.6941 0.3451 0.1059
 	Ks 0.3500 0.3500 0.3500
+	
+	map_Kd 005_wood_001_color.jpg
+	map_Ks 005_wood_001_color.jpg
 
 newmtl wire_228184153
 	Ns 32
@@ -53,6 +61,9 @@ newmtl wire_228184153
 	Kd 0.8941 0.7216 0.6000
 	Ks 0.3500 0.3500 0.3500
 
+	map_Kd book_pages.png
+	map_Ks book_pages.png
+
 newmtl wire_154154229
 	Ns 32
 	d 1
@@ -62,3 +73,6 @@ newmtl wire_154154229
 	Ka 0.6039 0.6039 0.8980
 	Kd 0.6039 0.6039 0.8980
 	Ks 0.3500 0.3500 0.3500
+	
+	map_Kd book_pages.png
+	map_Ks book_pages.png

@@ -78,7 +78,20 @@ Model modelRock;
 Model modelRailRoad;
 Model modelAircraft;
 Model modelTable;
-//Model modelCama;
+Model modelBuro;
+Model modelCama;
+Model modelCasaInterior;
+Model modelEscritorio;
+Model modelCarretera;
+Model modelEclipseChasis;
+Model modelEclipseWheelsFrontal;
+Model modelEclipseWheelsRear;
+Model modelHeliChasis;
+Model modelHeliElises;
+Model modelHeliElisesTraseras;
+Model modelLambo;
+//Model modelMueble;
+
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5, textureID6, textureID7;
 GLuint skyboxTextureID;
@@ -109,6 +122,10 @@ float rot0 = 0.0, dz = 0.0;
 float rot1 = 0.0, rot2 = 0.0, rot3 = 0.0, rot4 = 0.0;
 bool sentido = true;
 
+int modelSelected = 0;
+bool enableCountSelected = true;
+
+double currTime, lastTime;
 double deltaTime;
 
 // Se definen todos las funciones.
@@ -260,9 +277,43 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelAircraft.loadModel("../models/Aircraft_obj/E 45 Aircraft_obj.obj");
 	modelAircraft.setShader(&shaderMulLighting);
 
-	/*modelCama.loadModel("../models/cama/Full_Size_Bed_with_White_Sheets_Black_V1.obj");
-	modelCama.setShader(&shaderMulLighting);*/
+	modelBuro.loadModel("../models/nightstand_01/eb_nightstand_01.obj");
+	modelBuro.setShader(&shaderMulLighting);
 
+	modelCama.loadModel("../models/bed/Full_Size_Bed_with_White_Sheets_Black_V1.obj");
+	modelCama.setShader(&shaderMulLighting);
+
+	modelCasaInterior.loadModel("../models/House_interior/house interior.obj");
+	modelCasaInterior.setShader(&shaderMulLighting);
+
+	modelEscritorio.loadModel("../models/Escritorio/mesa_pc.obj");
+	modelEscritorio.setShader(&shaderMulLighting);
+
+	//modelMueble.loadModel("../models/Wood_Table/Wood_Table.obj");
+	//modelMueble.setShader(&shaderMulLighting);
+
+	modelCarretera.loadModel("../models/RoadV2/Road/roadV2.obj");
+	modelCarretera.setShader(&shaderMulLighting);
+
+	// Eclipse
+	modelEclipseChasis.loadModel("../models/Eclipse/2003eclipse.obj");
+	modelEclipseChasis.setShader(&shaderMulLighting);
+	modelEclipseWheelsFrontal.loadModel("../models/Eclipse/2003eclipse_frontal_wheels.obj");
+	modelEclipseChasis.setShader(&shaderMulLighting);
+	modelEclipseWheelsRear.loadModel("../models/Eclipse/2003eclipse_rear_wheels.obj");
+	modelEclipseChasis.setShader(&shaderMulLighting);
+
+	//Helicoptero
+	modelHeliChasis.loadModel("../models/helicopter/Mi_24_chasis.obj");
+	modelHeliChasis.setShader(&shaderMulLighting);
+	modelHeliElises.loadModel("../models/helicopter/Mi_24_heli.obj");
+	modelHeliElises.setShader(&shaderMulLighting);
+	modelHeliElisesTraseras.loadModel("../models/helicopter/Mi_24.obj");
+	modelHeliElisesTraseras.setShader(&shaderMulLighting);
+
+	// Lamborginhi
+	modelLambo.loadModel("../models/Lamborginhi_Aventador_OBJ/Lamborghini_Aventador.obj");
+	modelLambo.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 
@@ -684,8 +735,27 @@ void applicationLoop() {
 	int state = 0;
 	float offsetAircraftAdvance = 0.0;
 	float offsetAircraftRot = 0.0;
+	glm::mat4 modelMatrixEclipse = glm::mat4(1.0f);
+	modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(20, 0.0, 10.0));
+	float rotHeliElisesY = 0.0;
+	float rotHeliElisesX = 0.0;
+	float advanceCount = 0.0;
+	float rotCount = 0.0;
+	float rolWheelsX = 0.0;
+	float rolWheelsY = 0.0;
+
+	glm::mat4 modelMatrixHeli = glm::mat4(1.0f);
+	modelMatrixHeli = glm::translate(modelMatrixHeli, glm::vec3(16.0, 5.0, 10.0));
+	float rotHelHelY = 0.0;
 
 	while (psi) {
+		currTime = TimeManager::Instance().GetTime();
+		if (currTime - lastTime < 1 / 30) {
+			glfwPollEvents();
+			continue;
+		}
+		lastTime = currTime;
+
 		psi = processInput(true);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -881,164 +951,164 @@ void applicationLoop() {
 
 		model = glm::translate(model, glm::vec3(0, 0, dz));
 		model = glm::rotate(model, rot0, glm::vec3(0, 1, 0));
-		
-/*
-		//box1.enableWireMode();
-		// Usamos la textura ID 1
-		glBindTexture(GL_TEXTURE_2D, textureID1);
-		box1.render(glm::scale(model, glm::vec3(1.0, 1.0, 0.1)));
-		// No utilizar ninguna textura
-		glBindTexture(GL_TEXTURE_2D, 0);
 
-		// Articulacion 1
-		glm::mat4 j1 = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
-		j1 = glm::rotate(j1, rot1, glm::vec3(0, 0, 1));
-		j1 = glm::rotate(j1, rot2, glm::vec3(0, 1, 0));
-		sphere1.enableWireMode();
-		sphere1.render(glm::scale(j1, glm::vec3(0.1, 0.1, 0.1)));
+		/*
+				//box1.enableWireMode();
+				// Usamos la textura ID 1
+				glBindTexture(GL_TEXTURE_2D, textureID1);
+				box1.render(glm::scale(model, glm::vec3(1.0, 1.0, 0.1)));
+				// No utilizar ninguna textura
+				glBindTexture(GL_TEXTURE_2D, 0);
 
-		// Hueso 1
-		glm::mat4 l1 = glm::translate(j1, glm::vec3(0.25f, 0.0, 0.0));
-		l1 = glm::rotate(l1, glm::radians(90.0f), glm::vec3(0, 0, 1.0));
-		//cylinder1.enableWireMode();
-		cylinder1.render(glm::scale(l1, glm::vec3(0.1, 0.5, 0.1)));
+				// Articulacion 1
+				glm::mat4 j1 = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
+				j1 = glm::rotate(j1, rot1, glm::vec3(0, 0, 1));
+				j1 = glm::rotate(j1, rot2, glm::vec3(0, 1, 0));
+				sphere1.enableWireMode();
+				sphere1.render(glm::scale(j1, glm::vec3(0.1, 0.1, 0.1)));
 
-		// Articulacion 2
-		glm::mat4 j2 = glm::translate(j1, glm::vec3(0.5, 0.0f, 0.0f));
-		j2 = glm::rotate(j2, rot3, glm::vec3(0.0, 0.0, 1.0));
-		j2 = glm::rotate(j2, rot4, glm::vec3(1.0, 0.0, 0.0));
-		sphere1.enableWireMode();
-		sphere1.render(glm::scale(j2, glm::vec3(0.1, 0.1, 0.1)));
+				// Hueso 1
+				glm::mat4 l1 = glm::translate(j1, glm::vec3(0.25f, 0.0, 0.0));
+				l1 = glm::rotate(l1, glm::radians(90.0f), glm::vec3(0, 0, 1.0));
+				//cylinder1.enableWireMode();
+				cylinder1.render(glm::scale(l1, glm::vec3(0.1, 0.5, 0.1)));
 
-		// Hueso 2
-		glm::mat4 l2 = glm::translate(j2, glm::vec3(0.25, 0.0, 0.0));
-		l2 = glm::rotate(l2, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-		//cylinder1.enableWireMode();
-		cylinder1.render(glm::scale(l2, glm::vec3(0.1, 0.5, 0.1)));
+				// Articulacion 2
+				glm::mat4 j2 = glm::translate(j1, glm::vec3(0.5, 0.0f, 0.0f));
+				j2 = glm::rotate(j2, rot3, glm::vec3(0.0, 0.0, 1.0));
+				j2 = glm::rotate(j2, rot4, glm::vec3(1.0, 0.0, 0.0));
+				sphere1.enableWireMode();
+				sphere1.render(glm::scale(j2, glm::vec3(0.1, 0.1, 0.1)));
 
-		// Ojo
-		glm::mat4 ojo = glm::translate(model, glm::vec3(0.25, 0.25, 0.05));
-		//sphere1.enableWireMode();
-		sphere1.render(glm::scale(ojo, glm::vec3(0.2, 0.2, 0.1)));
+				// Hueso 2
+				glm::mat4 l2 = glm::translate(j2, glm::vec3(0.25, 0.0, 0.0));
+				l2 = glm::rotate(l2, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+				//cylinder1.enableWireMode();
+				cylinder1.render(glm::scale(l2, glm::vec3(0.1, 0.5, 0.1)));
 
-		glm::mat4 ojo2 = glm::translate(model, glm::vec3(-0.25, 0.25, 0.05));
-		//sphere2.enableWireMode();
-		sphere2.render(glm::scale(ojo2, glm::vec3(0.2, 0.2, 0.1)));
+				// Ojo
+				glm::mat4 ojo = glm::translate(model, glm::vec3(0.25, 0.25, 0.05));
+				//sphere1.enableWireMode();
+				sphere1.render(glm::scale(ojo, glm::vec3(0.2, 0.2, 0.1)));
 
-		glm::mat4 modelAgua = glm::mat4(1.0);
-		modelAgua = glm::translate(modelAgua, glm::vec3(5.0, 0.01, 5.0));
-		modelAgua = glm::scale(modelAgua, glm::vec3(5.0, 0.01, 5.0));
-		// Se activa la textura del agua
-		glBindTexture(GL_TEXTURE_2D, textureID2);
-		// Le cambiamos el shader con multiples luces NO OLVIDAR
-		shaderMulLighting.setFloat("offsetX", offX);
-		box2.render(modelAgua);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		shaderMulLighting.setFloat("offsetX", 0);
+				glm::mat4 ojo2 = glm::translate(model, glm::vec3(-0.25, 0.25, 0.05));
+				//sphere2.enableWireMode();
+				sphere2.render(glm::scale(ojo2, glm::vec3(0.2, 0.2, 0.1)));
 
-		glm::mat4 modelCesped = glm::mat4(1.0);
-		modelCesped = glm::translate(modelCesped, glm::vec3(0.0, 0.0, 0.0));
-		modelCesped = glm::scale(modelCesped, glm::vec3(40.0, 0.001, 40.0));
-		// Se activa la textura del agua
-		glBindTexture(GL_TEXTURE_2D, textureID5);
-		boxCesped.render(modelCesped);
-		glBindTexture(GL_TEXTURE_2D, 0);
+				glm::mat4 modelAgua = glm::mat4(1.0);
+				modelAgua = glm::translate(modelAgua, glm::vec3(5.0, 0.01, 5.0));
+				modelAgua = glm::scale(modelAgua, glm::vec3(5.0, 0.01, 5.0));
+				// Se activa la textura del agua
+				glBindTexture(GL_TEXTURE_2D, textureID2);
+				// Le cambiamos el shader con multiples luces NO OLVIDAR
+				shaderMulLighting.setFloat("offsetX", offX);
+				box2.render(modelAgua);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				shaderMulLighting.setFloat("offsetX", 0);
 
-		glm::mat4 modelSphere = glm::mat4(1.0);
-		modelSphere = glm::translate(modelSphere, glm::vec3(10.0, 0.5, 0.0));
-		glBindTexture(GL_TEXTURE_2D, textureID3);
-		sphere3.render(modelSphere);
-		glBindTexture(GL_TEXTURE_2D, 0);
+				glm::mat4 modelCesped = glm::mat4(1.0);
+				modelCesped = glm::translate(modelCesped, glm::vec3(0.0, 0.0, 0.0));
+				modelCesped = glm::scale(modelCesped, glm::vec3(40.0, 0.001, 40.0));
+				// Se activa la textura del agua
+				glBindTexture(GL_TEXTURE_2D, textureID5);
+				boxCesped.render(modelCesped);
+				glBindTexture(GL_TEXTURE_2D, 0);
 
-		glm::mat4 modelCylinder = glm::mat4(1.0);
-		modelCylinder = glm::translate(modelCylinder,
-				glm::vec3(-3.0, 0.5, 0.0));
-		// Envolvente desde el indice 0, el tamanio es 20 * 20 * 6
-		// Se usa la textura 1 ( Bon sponja)
-		glBindTexture(GL_TEXTURE_2D, textureID1);
-		cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks() * 6,
-				modelCylinder);
-		// Tapa Superior desde el indice : 20 * 20 * 6, el tamanio de indices es 20 * 3
-		// Se usa la textura 2 ( Agua )
-		glBindTexture(GL_TEXTURE_2D, textureID2);
-		cylinder2.render(cylinder2.getSlices() * cylinder2.getStacks() * 6,
-				cylinder2.getSlices() * 3, modelCylinder);
-		// Tapa inferior desde el indice : 20 * 20 * 6 + 20 * 3, el tamanio de indices es 20 * 3
-		// Se usa la textura 3 ( Goku )
-		glBindTexture(GL_TEXTURE_2D, textureID3);
-		cylinder2.render(
-				cylinder2.getSlices() * cylinder2.getStacks() * 6
-						+ cylinder2.getSlices() * 3, cylinder2.getSlices() * 3,
-				modelCylinder);
-		glBindTexture(GL_TEXTURE_2D, 0);
+				glm::mat4 modelSphere = glm::mat4(1.0);
+				modelSphere = glm::translate(modelSphere, glm::vec3(10.0, 0.5, 0.0));
+				glBindTexture(GL_TEXTURE_2D, textureID3);
+				sphere3.render(modelSphere);
+				glBindTexture(GL_TEXTURE_2D, 0);
 
-		// Render del cubo con textura de ladrillos y con repeticion en x
-		glm::mat4 cubeTextureModel = glm::mat4(1.0);
-		cubeTextureModel = glm::translate(cubeTextureModel,
-				glm::vec3(-5.0, 0.5, 3.0));
-		glBindTexture(GL_TEXTURE_2D, textureID4);
-		shaderMulLighting.setVectorFloat2("scaleUV",
-				glm::value_ptr(glm::vec2(2.0, 1.0)));
-		box3.render(cubeTextureModel);
-		shaderMulLighting.setVectorFloat2("scaleUV",
-				glm::value_ptr(glm::vec2(0.0, 0.0)));
-		glBindTexture(GL_TEXTURE_2D, 0);
+				glm::mat4 modelCylinder = glm::mat4(1.0);
+				modelCylinder = glm::translate(modelCylinder,
+						glm::vec3(-3.0, 0.5, 0.0));
+				// Envolvente desde el indice 0, el tamanio es 20 * 20 * 6
+				// Se usa la textura 1 ( Bon sponja)
+				glBindTexture(GL_TEXTURE_2D, textureID1);
+				cylinder2.render(0, cylinder2.getSlices() * cylinder2.getStacks() * 6,
+						modelCylinder);
+				// Tapa Superior desde el indice : 20 * 20 * 6, el tamanio de indices es 20 * 3
+				// Se usa la textura 2 ( Agua )
+				glBindTexture(GL_TEXTURE_2D, textureID2);
+				cylinder2.render(cylinder2.getSlices() * cylinder2.getStacks() * 6,
+						cylinder2.getSlices() * 3, modelCylinder);
+				// Tapa inferior desde el indice : 20 * 20 * 6 + 20 * 3, el tamanio de indices es 20 * 3
+				// Se usa la textura 3 ( Goku )
+				glBindTexture(GL_TEXTURE_2D, textureID3);
+				cylinder2.render(
+						cylinder2.getSlices() * cylinder2.getStacks() * 6
+								+ cylinder2.getSlices() * 3, cylinder2.getSlices() * 3,
+						modelCylinder);
+				glBindTexture(GL_TEXTURE_2D, 0);
 
-		// Render del cyindro con materiales
-		glm::mat4 cylinderMaterialModel = glm::mat4(1.0);
-		cylinderMaterialModel = glm::translate(cylinderMaterialModel,  glm::vec3(3.0, 0.5, -3.0));
-		shaderMaterialLighting.setVectorFloat3("material.ambient", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
-		shaderMaterialLighting.setVectorFloat3("material.diffuse", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
-		shaderMaterialLighting.setVectorFloat3("material.specular", glm::value_ptr(glm::vec3(0.727811f, 0.626959f, 0.626959f)));
-		shaderMaterialLighting.setFloat("material.shininess", 76.8f);
-		cylinderMaterials.render(cylinderMaterialModel);
+				// Render del cubo con textura de ladrillos y con repeticion en x
+				glm::mat4 cubeTextureModel = glm::mat4(1.0);
+				cubeTextureModel = glm::translate(cubeTextureModel,
+						glm::vec3(-5.0, 0.5, 3.0));
+				glBindTexture(GL_TEXTURE_2D, textureID4);
+				shaderMulLighting.setVectorFloat2("scaleUV",
+						glm::value_ptr(glm::vec2(2.0, 1.0)));
+				box3.render(cubeTextureModel);
+				shaderMulLighting.setVectorFloat2("scaleUV",
+						glm::value_ptr(glm::vec2(0.0, 0.0)));
+				glBindTexture(GL_TEXTURE_2D, 0);
 
-		glm::mat4 boxMaterialModel = glm::mat4(1.0f);
-		boxMaterialModel = glm::translate(boxMaterialModel, glm::vec3(-3.0, 0.5, -3.0));
-		shaderMaterialLighting.setVectorFloat3("material.ambient", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
-		shaderMaterialLighting.setVectorFloat3("material.diffuse", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
-		shaderMaterialLighting.setVectorFloat3("material.specular", glm::value_ptr(glm::vec3(0.727811f, 0.626959f, 0.626959f)));
-		shaderMaterialLighting.setFloat("material.shininess", 76.8f);
-		boxMaterials.render(boxMaterialModel);
+				// Render del cyindro con materiales
+				glm::mat4 cylinderMaterialModel = glm::mat4(1.0);
+				cylinderMaterialModel = glm::translate(cylinderMaterialModel,  glm::vec3(3.0, 0.5, -3.0));
+				shaderMaterialLighting.setVectorFloat3("material.ambient", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
+				shaderMaterialLighting.setVectorFloat3("material.diffuse", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
+				shaderMaterialLighting.setVectorFloat3("material.specular", glm::value_ptr(glm::vec3(0.727811f, 0.626959f, 0.626959f)));
+				shaderMaterialLighting.setFloat("material.shininess", 76.8f);
+				cylinderMaterials.render(cylinderMaterialModel);
 
-		//Models complex render
-		glm::mat4 matrixModelRock = glm::mat4(1.0);
-		matrixModelRock = glm::translate(matrixModelRock, glm::vec3(-3.0, 0.0, 6.0));
-		modelRock.render(matrixModelRock);
-		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
-		glActiveTexture(GL_TEXTURE0);
-		// Esto es para las vias del tren
-		glm::mat4 matrixModelRailroad = glm::mat4(1.0);
-		matrixModelRailroad = glm::translate(matrixModelRailroad, glm::vec3(3.0, 0.0, 10.0));
-		modelRailRoad.render(matrixModelRailroad);
-		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
-		glActiveTexture(GL_TEXTURE0);
+				glm::mat4 boxMaterialModel = glm::mat4(1.0f);
+				boxMaterialModel = glm::translate(boxMaterialModel, glm::vec3(-3.0, 0.5, -3.0));
+				shaderMaterialLighting.setVectorFloat3("material.ambient", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
+				shaderMaterialLighting.setVectorFloat3("material.diffuse", glm::value_ptr(glm::vec3(0.61424f, 0.04136f, 0.04136f)));
+				shaderMaterialLighting.setVectorFloat3("material.specular", glm::value_ptr(glm::vec3(0.727811f, 0.626959f, 0.626959f)));
+				shaderMaterialLighting.setFloat("material.shininess", 76.8f);
+				boxMaterials.render(boxMaterialModel);
 
-		//se construye la casa 
-		glBindTexture(GL_TEXTURE_2D, textureID4);		
-		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));		//escalamiento
-		boxWall.setPosition(glm::vec3(-10.0, 2.5, 0.0));	//posicion
-		boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));	//eje de giro
-		boxWall.render();
-	    boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
-		boxWall.setPosition(glm::vec3(-15.0, 2.5, -5.0));
-		boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
-		boxWall.render();
-		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
-		boxWall.setPosition(glm::vec3(-5.0, 2.5, -5.0));
-		boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
-		boxWall.render();
-		boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
-		boxWall.setPosition(glm::vec3(-10.0, 2.5, -10.0));
-		boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));
-		boxWall.render();
-		boxWall.setScale(glm::vec3(12.0, 12.0, 0.05));
-		boxWall.setPosition(glm::vec3(-10.0, 5, -5.0));
-		boxWall.setOrientation(glm::vec3(90.0, 0.0, 0.0));
-		boxWall.render();
-		glBindTexture(GL_TEXTURE_2D, 0);
+				//Models complex render
+				glm::mat4 matrixModelRock = glm::mat4(1.0);
+				matrixModelRock = glm::translate(matrixModelRock, glm::vec3(-3.0, 0.0, 6.0));
+				modelRock.render(matrixModelRock);
+				// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+				glActiveTexture(GL_TEXTURE0);
+				// Esto es para las vias del tren
+				glm::mat4 matrixModelRailroad = glm::mat4(1.0);
+				matrixModelRailroad = glm::translate(matrixModelRailroad, glm::vec3(3.0, 0.0, 10.0));
+				modelRailRoad.render(matrixModelRailroad);
+				// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+				glActiveTexture(GL_TEXTURE0);
 
-	*/
+				//se construye la casa
+				glBindTexture(GL_TEXTURE_2D, textureID4);
+				boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));		//escalamiento
+				boxWall.setPosition(glm::vec3(-10.0, 2.5, 0.0));	//posicion
+				boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));	//eje de giro
+				boxWall.render();
+				boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+				boxWall.setPosition(glm::vec3(-15.0, 2.5, -5.0));
+				boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
+				boxWall.render();
+				boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+				boxWall.setPosition(glm::vec3(-5.0, 2.5, -5.0));
+				boxWall.setOrientation(glm::vec3(0.0, 90.0, 0.0));
+				boxWall.render();
+				boxWall.setScale(glm::vec3(10.0, 5.0, 0.05));
+				boxWall.setPosition(glm::vec3(-10.0, 2.5, -10.0));
+				boxWall.setOrientation(glm::vec3(0.0, 0.0, 0.0));
+				boxWall.render();
+				boxWall.setScale(glm::vec3(12.0, 12.0, 0.05));
+				boxWall.setPosition(glm::vec3(-10.0, 5, -5.0));
+				boxWall.setOrientation(glm::vec3(90.0, 0.0, 0.0));
+				boxWall.render();
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+			*/
 
 			//modelo de la casa//
 		glm::mat4 cubeTex1 = glm::mat4(3.0);
@@ -1471,17 +1541,119 @@ void applicationLoop() {
 
 		//Models mesa de centro
 		glm::mat4 matrixModelTable = glm::mat4(1.0);
-		matrixModelTable = glm::translate(matrixModelTable, glm::vec3(4.0, 1.0, 6.0));
+		matrixModelTable = glm::translate(matrixModelTable, glm::vec3(3.0, 1.0, 3.0));
 		modelTable.render(matrixModelTable);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
-/*
-		//Models cama
+
+
+		//Models Buro
+		glm::mat4 matrixModelBuro = glm::mat4(1.0);
+		matrixModelBuro = glm::translate(matrixModelBuro, glm::vec3(1.0, 1.0, 3.0));
+		matrixModelBuro = glm::scale(matrixModelBuro, glm::vec3(0.008, 0.008, 0.008));
+		modelBuro.render(matrixModelBuro);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Buro
+		glm::mat4 matrixModelBuro2 = glm::mat4(1.0);
+		matrixModelBuro2 = glm::translate(matrixModelBuro2, glm::vec3(1.0, 1.0, 6.0));
+		matrixModelBuro2 = glm::scale(matrixModelBuro2, glm::vec3(0.008, 0.008, 0.008));
+		modelBuro.render(matrixModelBuro2);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Buro
+		glm::mat4 matrixModelBuro3 = glm::mat4(1.0);
+		matrixModelBuro3 = glm::translate(matrixModelBuro3, glm::vec3(1.0, 1.0, 10.0));
+		matrixModelBuro3 = glm::scale(matrixModelBuro3, glm::vec3(0.008, 0.008, 0.008));
+		modelBuro.render(matrixModelBuro3);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models Cama
 		glm::mat4 matrixModelCama = glm::mat4(1.0);
-		matrixModelCama = glm::translate(matrixModelCama, glm::vec3(4.0, 3.0, 6.0));
+		matrixModelCama = glm::translate(matrixModelCama, glm::vec3(3.5, 1.4, 9.0));
+		matrixModelCama = glm::rotate(matrixModelCama, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));
+		matrixModelCama = glm::rotate(matrixModelCama, glm::radians(180.0f), glm::vec3(0.0, 1.0, 0.0));
+		matrixModelCama = glm::scale(matrixModelCama, glm::vec3(0.008, 0.008, 0.008));
 		modelCama.render(matrixModelCama);
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models house interior 
+		glm::mat4 matrixModelCasa = glm::mat4(1.0);
+		matrixModelCasa = glm::translate(matrixModelCasa, glm::vec3(10.0, 1.0, 10.0));
+		matrixModelCasa = glm::rotate(matrixModelCasa, glm::radians(180.0f), glm::vec3(0.0, 1.0, 0.0));
+		matrixModelCasa = glm::scale(matrixModelCasa, glm::vec3(0.008, 0.008, 0.008));
+		modelCasaInterior.render(matrixModelCasa);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		//Models escritotio
+		glm::mat4 matrixModelEs = glm::mat4(1.0);
+		matrixModelEs = glm::translate(matrixModelEs, glm::vec3(9.0, 1.0, 5.0));
+		matrixModelEs = glm::scale(matrixModelEs, glm::vec3(0.008, 0.008, 0.008));
+		modelEscritorio.render(matrixModelEs);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+/*
+		//Models mueble 
+		glm::mat4 matrixModelWood_Table = glm::mat4(1.0);
+		matrixModelWood_Table = glm::translate(matrixModelWood_Table, glm::vec3(9.0, 1.0, 7.0));
+		//matrixModelWood_Table = glm::scale(matrixModelWood_Table, glm::vec3(0.008, 0.008, 0.008));
+		modelMueble.render(matrixModelWood_Table);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+*/
+		//Models Carretera
+		glm::mat4 matrixModelCarretera = glm::mat4(1.0);
+		matrixModelCarretera = glm::translate(matrixModelCarretera, glm::vec3(16.0, 0.0, 40.0));
+		matrixModelCarretera = glm::scale(matrixModelCarretera, glm::vec3(10, 2, 10.0));
+		modelCarretera.render(matrixModelCarretera);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
+
+		// Render for the eclipse car
+		glm::mat4 modelMatrixEclipseChasis = glm::mat4(modelMatrixEclipse);
+		modelMatrixEclipseChasis = glm::scale(modelMatrixEclipse, glm::vec3(0.5, 0.5, 0.5));
+		modelEclipseChasis.render(modelMatrixEclipseChasis);
+		glActiveTexture(GL_TEXTURE0);
+/*
+		glm::mat4 modelMatrixFrontalWheels = glm::mat4(modelMatrixEclipseChasis);
+		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, 1.05813, 4.11483));
+		modelMatrixFrontalWheels = glm::rotate(modelMatrixFrontalWheels, rolWheelsY, glm::vec3(0, 1, 0));
+		modelMatrixFrontalWheels = glm::rotate(modelMatrixFrontalWheels, rolWheelsX, glm::vec3(1, 0, 0));
+		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, -1.05813, -4.11483));
+		modelEclipseWheelsFrontal.render(modelMatrixFrontalWheels);
+		glActiveTexture(GL_TEXTURE0);
+
+		glm::mat4 modelMatrixRearWheels = glm::mat4(modelMatrixEclipseChasis);
+		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, 1.05813, -4.35157));
+		modelMatrixRearWheels = glm::rotate(modelMatrixRearWheels, rolWheelsX, glm::vec3(1, 0, 0));
+		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, -1.05813, 4.35157));
+		modelEclipseWheelsRear.render(modelMatrixRearWheels);
 		glActiveTexture(GL_TEXTURE0);*/
+
+		// Helicopter
+		glm::mat4 modelMatrixHeliChasis = glm::mat4(modelMatrixHeli);
+		modelHeliChasis.render(modelMatrixHeliChasis);
+		glActiveTexture(GL_TEXTURE0);
+
+		glm::mat4 modelMatrixHeliHeli = glm::mat4(modelMatrixHeliChasis);
+		modelMatrixHeliHeli = glm::translate(modelMatrixHeliHeli, glm::vec3(0.0, 0.0, -0.249548));
+		modelMatrixHeliHeli = glm::rotate(modelMatrixHeliHeli, rotHelHelY, glm::vec3(0, 1, 0));
+		modelMatrixHeliHeli = glm::translate(modelMatrixHeliHeli, glm::vec3(0.0, 0.0, 0.249548));
+		modelHeliElises.render(modelMatrixHeliHeli);
+		glActiveTexture(GL_TEXTURE0);
+
+		// Lambo car
+		glm::mat4 modelMatrixLambo = glm::mat4(1.0);
+		modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(20.0, 0.0, 5.0));
+		modelMatrixLambo = glm::scale(modelMatrixLambo, glm::vec3(2.0, 2.0, 2.0));
+		modelLambo.render(modelMatrixLambo);
+		glActiveTexture(GL_TEXTURE0);
+
 
 //		modelAircraft.render(matrixModelAircraft);
 //		glActiveTexture(GL_TEXTURE0);
@@ -1507,34 +1679,43 @@ void applicationLoop() {
 		dz = 0;
 		rot0 = 0;
 		offX += 0.001;
+		rolWheelsX += 0.01;
+		rotHeliElisesY += 0.01;
+		rotHeliElisesX += 0.1;
 
-/*		//checar estas funciones
+		/*******************************************
+		 * State machines
+		 *******************************************/
+		 // State machine for eclipse car
 		switch (state) {
 		case 0:
-			std::cout << "Advance:" << std::endl;
-			//0.001 debe de ser igual
-			matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(0.0, 0.0, 0.01));
-			offsetAircraftAdvance += 0.01;
-			if(offsetAircraftAdvance > 5.0) {
-				offsetAircraftAdvance = 0.0;
+			modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0, 0.0, 0.1));
+			advanceCount += 0.1;
+			rolWheelsY -= 0.01;
+			if (rolWheelsY < 0)
+				rolWheelsY = 0;
+			if (advanceCount > 10.0) {
+				advanceCount = 0;
+				rolWheelsY = 0;
 				state = 1;
 			}
 			break;
-		case 1:
-			std::cout << "	Turn:" << std::endl;
-			//0.001 debe de ser igual
-			matrixModelAircraft = glm::translate(matrixModelAircraft, glm::vec3(0.0, 0.0, 0.05));
-			matrixModelAircraft = glm::rotate(matrixModelAircraft, glm::radians (0.05f), glm::vec3(0.0, 1.0, 0.0));
-			offsetAircraftRot += 0.05f;
-			if (offsetAircraftRot > 90.0){
-				offsetAircraftRot = 0.0;
-				state = 0;
+			case 1:
+				modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0, 0.0, 0.025));
+				modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(0.5f), glm::vec3(0, 1, 0));
+				rotCount += 0.5f;
+				rolWheelsY += 0.01;
+				if (rolWheelsY > glm::radians(15.0))
+					rolWheelsY = glm::radians(15.0);
+				if (rotCount >= 90.0) {
+					rotCount = 0;
+					state = 0;
+				}
+				break;
 			}
-			break;
+
+			glfwSwapBuffers(window);
 		}
-*/
-		glfwSwapBuffers(window);
-	}
 }
 
 int main(int argc, char **argv) {
