@@ -137,13 +137,13 @@ bool record = false;*/
 
 // Joints interpolations Dart Lego
 // Descomentar
-/*std::vector<std::vector<float>> keyFramesJoints;
+/*std::vector<std::vector<float>> keyFramesDartJoints;
 std::vector<std::vector<glm::mat4>> keyFramesDart;
-int indexFrameJoints = 0;
-int indexFrameJointsNext = 1;
-float interpolationJoints = 0.0;
-int maxNumPasosJoints = 20;
-int numPasosJoints = 0;
+int indexFrameDartJoints = 0;
+int indexFrameDartJointsNext = 1;
+float interpolationDartJoints = 0.0;
+int maxNumPasosDartJoints = 20;
+int numPasosDartJoints = 0;
 
 int indexFrameDart = 0;
 int indexFrameDartNext = 1;
@@ -630,7 +630,7 @@ bool processInput(bool continueApplication) {
 		record = false;
 		myfile.close();
 		if(modelSelected == 1)
-			keyFramesJoints = getKeyRotFrames(fileName);
+			keyFramesDartJoints = getKeyRotFrames(fileName);
 		if (modelSelected == 2)
 			keyFramesDart = getKeyFrames(fileName);
 	}
@@ -769,7 +769,7 @@ void applicationLoop() {
 	// Descomentar
 	/*// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
-	keyFramesJoints = getKeyRotFrames(fileName);
+	keyFramesDartJoints = getKeyRotFrames(fileName);
 	keyFramesDart = getKeyFrames("../animaciones/animation_dart.txt");*/
 
 	lastTime = TimeManager::Instance().GetTime();
@@ -1250,26 +1250,26 @@ void applicationLoop() {
 				saveFrame = false;
 			}
 		}*/
-		/*else if(keyFramesJoints.size() > 0){
+		/*else if(keyFramesDartJoints.size() > 0){
 			// Para reproducir el frame
-			interpolationJoints = numPasosJoints / (float) maxNumPasosJoints;
-			numPasosJoints++;
-			if (interpolationJoints > 1.0) {
-				numPasosJoints = 0;
-				interpolationJoints = 0;
-				indexFrameJoints = indexFrameJointsNext;
-				indexFrameJointsNext++;
+			interpolationDartJoints = numPasosDartJoints / (float) maxNumPasosDartJoints;
+			numPasosDartJoints++;
+			if (interpolationDartJoints > 1.0) {
+				numPasosDartJoints = 0;
+				interpolationDartJoints = 0;
+				indexFrameDartJoints = indexFrameDartJointsNext;
+				indexFrameDartJointsNext++;
 			}
-			if (indexFrameJointsNext > keyFramesJoints.size() - 1)
-				indexFrameJointsNext = 0;
+			if (indexFrameDartJointsNext > keyFramesDartJoints.size() - 1)
+				indexFrameDartJointsNext = 0;
 
-			rotDartHead = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 0, interpolationJoints);
-			rotDartLeftArm = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 1, interpolationJoints);
-			rotDartLeftHand = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 2, interpolationJoints);
-			rotDartRightArm = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 3, interpolationJoints);
-			rotDartRightHand = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 4, interpolationJoints);
-			rotDartLeftLeg = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 5, interpolationJoints);
-			rotDartRightLeg = interpolate(keyFramesJoints, indexFrameJoints, indexFrameJointsNext, 6, interpolationJoints);
+			rotDartHead = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 0, interpolationDartJoints);
+			rotDartLeftArm = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 1, interpolationDartJoints);
+			rotDartLeftHand = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 2, interpolationDartJoints);
+			rotDartRightArm = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 3, interpolationDartJoints);
+			rotDartRightHand = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 4, interpolationDartJoints);
+			rotDartLeftLeg = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 5, interpolationDartJoints);
+			rotDartRightLeg = interpolate(keyFramesDartJoints, indexFrameDartJoints, indexFrameDartJointsNext, 6, interpolationDartJoints);
 		}*/
 
 		/*if (record && modelSelected == 2) {
