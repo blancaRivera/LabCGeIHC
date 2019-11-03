@@ -299,7 +299,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelEclipseChasis.loadModel("../models/Eclipse/2003eclipse.obj");
 	modelEclipseChasis.setShader(&shaderMulLighting);
 	modelEclipseWheelsFrontal.loadModel("../models/Eclipse/2003eclipse_frontal_wheels.obj");
-	modelEclipseChasis.setShader(&shaderMulLighting);
+	modelEclipseWheelsFrontal.setShader(&shaderMulLighting);
 	modelEclipseWheelsRear.loadModel("../models/Eclipse/2003eclipse_rear_wheels.obj");
 	modelEclipseChasis.setShader(&shaderMulLighting);
 
@@ -1619,7 +1619,7 @@ void applicationLoop() {
 		modelMatrixEclipseChasis = glm::scale(modelMatrixEclipse, glm::vec3(0.5, 0.5, 0.5));
 		modelEclipseChasis.render(modelMatrixEclipseChasis);
 		glActiveTexture(GL_TEXTURE0);
-/*
+
 		glm::mat4 modelMatrixFrontalWheels = glm::mat4(modelMatrixEclipseChasis);
 		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, 1.05813, 4.11483));
 		modelMatrixFrontalWheels = glm::rotate(modelMatrixFrontalWheels, rolWheelsY, glm::vec3(0, 1, 0));
@@ -1627,7 +1627,7 @@ void applicationLoop() {
 		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, -1.05813, -4.11483));
 		modelEclipseWheelsFrontal.render(modelMatrixFrontalWheels);
 		glActiveTexture(GL_TEXTURE0);
-
+/*
 		glm::mat4 modelMatrixRearWheels = glm::mat4(modelMatrixEclipseChasis);
 		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, 1.05813, -4.35157));
 		modelMatrixRearWheels = glm::rotate(modelMatrixRearWheels, rolWheelsX, glm::vec3(1, 0, 0));
