@@ -90,6 +90,7 @@ Model modelHeliChasis;
 Model modelHeliElises;
 Model modelHeliElisesTraseras;
 Model modelLambo;
+Model modelTV;
 //Model modelMueble;
 
 
@@ -271,6 +272,9 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelTable.loadModel("../models/CenterTable/CenterTable.obj");
 	modelTable.setShader(&shaderMulLighting);
 
+	modelTV.loadModel("../models/Samsung_Smart_TV_55_Zoll/Samsung Smart TV 55 Zoll.obj");
+	modelTV.setShader(&shaderMulLighting);
+
 	modelRailRoad.loadModel("../models/railroad/railroad_track.obj");
 	modelRailRoad.setShader(&shaderMulLighting);
 
@@ -301,7 +305,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelEclipseWheelsFrontal.loadModel("../models/Eclipse/2003eclipse_frontal_wheels.obj");
 	modelEclipseWheelsFrontal.setShader(&shaderMulLighting);
 	modelEclipseWheelsRear.loadModel("../models/Eclipse/2003eclipse_rear_wheels.obj");
-	modelEclipseChasis.setShader(&shaderMulLighting);
+	modelEclipseWheelsRear.setShader(&shaderMulLighting);
 
 	//Helicoptero
 	modelHeliChasis.loadModel("../models/helicopter/Mi_24_chasis.obj");
@@ -1546,6 +1550,12 @@ void applicationLoop() {
 		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
 		glActiveTexture(GL_TEXTURE0);
 
+		//Models television
+		glm::mat4 matrixModelTV = glm::mat4(1.0);
+		matrixModelTV = glm::translate(matrixModelTV, glm::vec3(15.0, 1.0, 10.0));
+		modelTV.render(matrixModelTV);
+		// Forze to enable the unit texture to 0 always ----------------- IMPORTANT
+		glActiveTexture(GL_TEXTURE0);
 
 		//Models Buro
 		glm::mat4 matrixModelBuro = glm::mat4(1.0);
@@ -1627,13 +1637,13 @@ void applicationLoop() {
 		modelMatrixFrontalWheels = glm::translate(modelMatrixFrontalWheels, glm::vec3(0.0, -1.05813, -4.11483));
 		modelEclipseWheelsFrontal.render(modelMatrixFrontalWheels);
 		glActiveTexture(GL_TEXTURE0);
-/*
+
 		glm::mat4 modelMatrixRearWheels = glm::mat4(modelMatrixEclipseChasis);
 		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, 1.05813, -4.35157));
 		modelMatrixRearWheels = glm::rotate(modelMatrixRearWheels, rolWheelsX, glm::vec3(1, 0, 0));
 		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, -1.05813, 4.35157));
 		modelEclipseWheelsRear.render(modelMatrixRearWheels);
-		glActiveTexture(GL_TEXTURE0);*/
+		glActiveTexture(GL_TEXTURE0);
 
 		// Helicopter
 		glm::mat4 modelMatrixHeliChasis = glm::mat4(modelMatrixHeli);
