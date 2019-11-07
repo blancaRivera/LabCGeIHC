@@ -40,6 +40,8 @@
 int screenWidth;
 int screenHeight;
 
+bool cameraSel = 0;
+
 GLFWwindow *window;
 
 Shader shader;
@@ -59,6 +61,7 @@ Shader shaderSkybox;
 Shader shaderMulLighting;
 
 std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
+std::shared_ptr<FirstPersonCamera> camera2(new FirstPersonCamera());
 
 Sphere sphere1(20, 20);
 Sphere sphere2(20, 20);
@@ -96,6 +99,8 @@ Model modelDartLegoLeftHand;
 Model modelDartLegoRightHand;
 Model modelDartLegoLeftLeg;
 Model modelDartLegoRightLeg;
+
+glm::mat4 view;
 
 GLuint textureID1, textureID2, textureID3, textureID4, textureID5;
 GLuint skyboxTextureID;
@@ -605,10 +610,14 @@ bool processInput(bool continueApplication) {
 		else if (cameraSel == 1)
 			camera2->moveFrontCamera(true, deltaTime);
 	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera->moveRightCamera(true, deltaTime);
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		camera->mouseMoveCamera(offsetX, offsetY, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		if (cameraSel == 0)
+			camera->moveRightCamera(false, deltaTime);
+		else if (cameraSel == 1)
+			camera2->moveFrontCamera(true, deltaTime);
+	}
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) 
+			camera->mouseMoveCamera(offsetX, offsetY, deltaTime);
 	offsetX = 0;
 	offsetY = 0;
 
@@ -746,6 +755,12 @@ bool processInput(bool continueApplication) {
 		advanceDartBody = -0.02;
 	else if (modelSelected == 2 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		advanceDartBody = 0.02;
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+		cameraSel = 1;
+	}
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+		cameraSel = 0;
+	}
 
 	glfwPollEvents();
 	return continueApplication;
@@ -804,7 +819,12 @@ void applicationLoop() {
 
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
 				(float) screenWidth / (float) screenHeight, 0.01f, 100.0f);
-		glm::mat4 view = camera->getViewMatrix();
+
+		if (cameraSel == 0)
+			view = camera->getViewMatrix();
+		if (cameraSel==1)
+			view = camera2->getViewMatrix();
+		//glm::mat4 view = camera->getViewMatrix();
 
 		// Settea la matriz de vista y projection al shader con solo color
 		shader.setMatrix4("projection", 1, false, glm::value_ptr(projection));
